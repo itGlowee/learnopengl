@@ -6,7 +6,7 @@
             "command": "gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
-                "-I${fileDirname}/../../include",
+                "-I${workspaceFolder}/include",
                 "-g",
                 "${file}",
                 "${fileDirname}/../../include/glad/glad.c",
@@ -14,7 +14,8 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe",
                 "-L${fileDirname}/../include",
                 "-lopengl32",
-                "-lglfw3dll"
+                "-lglfw3dll",
+                "-lfreetype"
             ],
             "options": {
                 "cwd": "${fileDirname}"
