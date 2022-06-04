@@ -1,8 +1,8 @@
 {
     "configurations": [
     {
-        "preLaunchTask": "compile",
-        "name": "(gdb) Launch",
+        "preLaunchTask": "compileWindows",
+        "name": "Build and run on Windows",
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/src/main.exe",
