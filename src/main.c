@@ -7,11 +7,13 @@
 #include <stdio.h>
 #define WINDOWWIDTH 800
 #define WINDOWHEIGHT 600
+#define CHARSETSIZE 128
 
 #define WINDOWS 1
 #define LINUX 0
 
 #if WINDOWS
+#include <windows.h>
 #define FONTS "C:/Windows/Fonts/"
 #elif LINUX
 #define FONTS "/usr/share/fonts/truetype/"
@@ -26,6 +28,17 @@ void processInput(GLFWwindow *window) {
         glfwSetWindowShouldClose(window, 1);
     }
 }
+
+struct ivec2 {
+    int a, b;
+};
+
+struct Character {
+    unsigned int TextureID;
+    struct ivec2 Size;
+    struct ivec2 Bearing;
+    unsigned int Advance;
+} charset[CHARSETSIZE];
 
 int main() {
     glfwInit();
@@ -48,7 +61,6 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
     FT_Library ft;
-    FT_Error error;
     if (FT_Init_FreeType(&ft))
     {
         printf("ERROR::FREETYPE: Could not init FreeType Library\n");
@@ -56,13 +68,55 @@ int main() {
     }
 
     FT_Face face;
-    if (error = FT_New_Face(ft, FONTS "arial.ttf", 0, &face))
+    if (FT_New_Face(ft, FONTS "arial.ttf", 0, &face))
     {
         printf("ERROR::FREETYPE: Failed to load font\n");
-        printf("%d\n", error);
         return -1;
     }
 
+    FT_Set_Pixel_Sizes(face, 0, 48);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    for (unsigned char c = 0; c < CHARSETSIZE; c++) {
+
+        if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
+            printf("ERROR::FREETYPE: Failed to load Glyph");
+            continue;
+        }
+
+        //generate texture for glyph
+        unsigned int texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(
+            GL_TEXTURE_2D,
+            0,
+            GL_RED,
+            face->glyph->bitmap.width,
+            face->glyph->bitmap.rows,
+            0,
+            GL_RED,
+            GL_UNSIGNED_BYTE,
+            face->glyph->bitmap.buffer
+        );
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        struct Character character = {
+            texture,
+            { face->glyph->bitmap.width, face->glyph->bitmap.rows },
+            { face->glyph->bitmap_left, face->glyph->bitmap_top },
+            face->glyph->advance.x
+        };
+
+        charset[c] = character;
+    }
+    FT_Done_Face(face);
+    FT_Done_FreeType(ft);
 
 
     while(!glfwWindowShouldClose(window)) {
