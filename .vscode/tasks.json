@@ -1,0 +1,29 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "compile",
+            "command": "gcc.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-I${fileDirname}/../../include",
+                "-g",
+                "${file}",
+                "${fileDirname}/../../include/glad/glad.c",
+                "-o",
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-L${fileDirname}/../include",
+                "-lopengl32",
+                "-lglfw3dll"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+        }
+    ],
+    "version": "2.0.0"
+}
