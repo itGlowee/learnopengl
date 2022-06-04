@@ -118,6 +118,9 @@ int main() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
 
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
