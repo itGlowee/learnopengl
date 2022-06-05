@@ -24,6 +24,37 @@
                 "$gcc"
             ],
             "group": "build",
+        },
+        {
+            "type": "cppbuild",
+            "label": "compileLinux",
+            "command": "gcc",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-I${workspaceFolder}/include",
+                "-g",
+                "${file}",
+                "${fileDirname}/../include/glad/glad.c",
+                "-o",
+                "${fileDirname}/../build/${fileBasenameNoExtension}",
+                "-L${fileDirname}/../include",
+                "-lGL",
+                "-lglfw3",
+                "-lX11",
+                "-lm",
+                "-lfreetype"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+        },
+        {
+            "label": "make",
+            "command": "make",
         }
     ],
     "version": "2.0.0"

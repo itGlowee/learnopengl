@@ -9,8 +9,8 @@
 #define WINDOWHEIGHT 600
 #define CHARSETSIZE 128
 
-#define WINDOWS 1
-#define LINUX 0
+#define WINDOWS 0
+#define LINUX 1
 
 #if WINDOWS
 #include <windows.h>
@@ -66,9 +66,8 @@ int main() {
         printf("ERROR::FREETYPE: Could not init FreeType Library\n");
         return -1;
     }
-
     FT_Face face;
-    if (FT_New_Face(ft, FONTS "arial.ttf", 0, &face))
+    if (FT_New_Face(ft, FONTS "ubuntu/Ubuntu-Th.ttf", 0, &face))
     {
         printf("ERROR::FREETYPE: Failed to load font\n");
         return -1;
