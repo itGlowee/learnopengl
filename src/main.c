@@ -126,7 +126,7 @@ void RenderText(unsigned int shader, char *text, float x, float y, float scale, 
     for (int i = 0; text[i] != '\0'; i++) {
         struct Character ch = charset[text[i]];
         float xpos = x + ch.Bearing[0] * scale;
-        float ypos = y - (ch.Size[1] - ch.Bearing[0]) * scale;
+        float ypos = y - (ch.Size[1] - ch.Bearing[1]) * scale;
 
         float w = ch.Size[0] * scale;
         float h = ch.Size[1] * scale;
@@ -142,8 +142,10 @@ void RenderText(unsigned int shader, char *text, float x, float y, float scale, 
         };
 
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -152,7 +154,7 @@ void RenderText(unsigned int shader, char *text, float x, float y, float scale, 
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-
+    return;
 }
 
 int main() {
@@ -175,7 +177,7 @@ int main() {
     }
     glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-
+    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 
@@ -183,7 +185,7 @@ int main() {
     unsigned int myShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
     mat4 projection;
     //glm_ortho_default_rh_no(1.0f, projection);
-    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, 1000.0f, projection);
+    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
 	glUseProgram(myShader);
     glUniformMatrix4fv(glGetUniformLocation(myShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
