@@ -1,0 +1,8 @@
+make.exe --dry-run --always-make --keep-going --print-directory
+make: Entering directory 'e:/Desktop/My Bubble/Programming/OpenGL/learnopengl'
+gcc -Wall -Wextra -g  -Iinclude -c -o src/main.o src/main.c
+ 
+gcc -Wall -Wextra -g  -Iinclude -c -o include/glad/glad.o include/glad/glad.c
+gcc -o build/main src/main.o include/glad/glad.o -lGL -lglfw3 -lX11 -lm -lfreetype
+make: Leaving directory 'e:/Desktop/My Bubble/Programming/OpenGL/learnopengl'
+ 

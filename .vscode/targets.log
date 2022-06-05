@@ -1,0 +1,385 @@
+make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 4.3
+# Built for Windows32
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+ 
+
+# Make data base, printed on Sun Jun 05 13:20:02 2022
+
+# Variables
+
+# environment
+FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
+# environment
+SYSTEMDRIVE = C:
+# environment
+LC_ALL = C
+# environment
+OCULUSBASE = C:\Program Files\Oculus\
+# environment
+USERPROFILE = C:\Users\eetus
+# environment
+PIP AND SHIT (SCONS) = C:\Python39\Scripts
+# environment
+VBOX_MSI_INSTALL_PATH = D:\VirtualBox\
+# environment
+LOCALAPPDATA = C:\Users\eetus\AppData\Local
+# environment
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-bbad48f9-d579-4553-8744-79b1cd115657-sock
+# makefile (from 'Makefile', line 6)
+CFILES = src/main.c include/glad/glad.c
+# environment
+VSCODE_CWD = C:\Windows\system32
+# environment
+CHOCOLATEYINSTALL = C:\ProgramData\chocolatey
+# environment
+PYTHON 3.7 SCRIPTS = C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64\Scripts
+# environment
+SYSTEMROOT = C:\Windows
+# environment
+PROCESSOR_LEVEL = 6
+# environment
+PSMODULEPATH = C:\Users\eetus\Documents\WindowsPowerShell\Modules;F:\gcpsdk\google-cloud-sdk\platform\PowerShell
+# default
+MAKE_COMMAND := C:/ProgramData/chocolatey/lib/make/tools/install/bin/make.exe
+# automatic
+@D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_19296_KBYGGAUQRWUKBFKK
+# environment
+CLOUDSDK_METRICS_ENVIRONMENT_VERSION = 1.18.2
+# environment
+ONEDRIVECOMMERCIAL = D:\School OneDrive\KamIT 365
+# environment
+FPS_BROWSER_USER_PROFILE_STRING = Default
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# makefile (from 'Makefile', line 9)
+BINARY = build/main
+# automatic
+%D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
+# automatic
+^D = $(patsubst %/,%,$(patsubst %\,%,$(dir $^)))
+# environment
+VSCODE_LOG_STACK = false
+# automatic
+%F = $(notdir $%)
+# environment
+GIT_INSTALL_ROOT = C:\Users\eetus\scoop\apps\git\current
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\eetus\AppData\Roaming\Code\CachedData\c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
+# environment
+LANG = C
+# default
+.LOADED := 
+# environment
+TMP = C:\Users\eetus\AppData\Local\Temp
+# default
+.INCLUDE_DIRS = .
+# environment
+PROCESSOR_ARCHITEW6432 = AMD64
+# makefile
+MAKEFLAGS = pqrR
+# environment
+INTEL_DEV_REDIST = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+# environment
+ONEDRIVE = D:\School OneDrive\KamIT 365
+# makefile
+CURDIR := e:/Desktop/My Bubble/Programming/OpenGL/learnopengl
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# automatic
+*D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
+# environment
+PROGRAMFILES = C:\Program Files (x86)
+# environment
+MFLAGS = -pqrR
+# default
+.SHELLFLAGS := -c
+# environment
+CLOUDSDK_PYTHON = C:\Users\eetus\AppData\Local\Temp\tmp6kpurao4\python\python.exe
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# automatic
++D = $(patsubst %/,%,$(patsubst %\,%,$(dir $+)))
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST := Makefile
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+VSCODE_PID = 19296
+# automatic
+?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
+# automatic
+*F = $(notdir $*)
+# automatic
+<D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
+# environment
+CG_BIN_PATH = C:\Program Files (x86)\NVIDIA Corporation\Cg\bin
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# default
+MAKE_HOST := Windows32
+# environment
+PROGRAMDATA = C:\ProgramData
+# default
+SHELL := sh.exe
+# environment
+HOMEPATH = \Users\eetus
+# default
+MAKECMDGOALS := all
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+COMSPEC = C:\Windows\system32\cmd.exe
+# environment
+WINDIR = C:\Windows
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PATH = F:\openjdk\bin;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Python39\Scripts\;C:\Python39\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\Program Files\Oculus\Support\oculus-runtime;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\Microsoft VS Code\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Git\cmd;C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64;C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64\Scripts;C:\Program Files\PuTTY\;E:\Desktop\ffmpeg-2021-02-10-git-e0fd35d867-full_build\bin;C:\MinGW64\bin;C:\ProgramData\chocolatey\bin;C:\Users\eetus\.emacs.d\bin;C:\Program Files\dotnet\;C:\Program Files (x86)\NVIDIA Corporation\Cg\bin;C:\Program Files (x86)\NVIDIA Corporation\Cg\bin.x64;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\ProgramData\chocolatey\lib\pulumi\tools\Pulumi\bin;C:\Users\eetus\scoop\shims;C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_64\Scripts;C:\Program Files (x86)\Nmap;C:\Users\eetus\.dotnet\tools;F:\gcpsdk\google-cloud-sdk\bin;C:\Users\eetus\AppData\Local\cloud-code\installer\google-cloud-sdk\bin;C:\Users\eetus\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin;C:\Program Files\Google\Cloud SDK\google-cloud-sdk\bin
+# environment
+COMPUTERNAME = DESKTOP-7H0NV4T
+# default
+MAKEFILES := 
+# automatic
+^F = $(notdir $^)
+# environment
+PROMPT = $P$G
+# environment
+CHOCOLATEYLASTPATHUPDATE = 132971862980633893
+# environment
+LOGONSERVER = \\DESKTOP-7H0NV4T
+# environment
+VSCODE_LOG_NATIVE = false
+# environment
+USERNAME = eetus
+# environment
+COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
+# automatic
+?F = $(notdir $?)
+# environment
+PROGRAMW6432 = C:\Program Files
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW
+# automatic
++F = $(notdir $+)
+# environment
+CG_LIB_PATH = C:\Program Files (x86)\NVIDIA Corporation\Cg\lib
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# makefile (from 'Makefile', line 7)
+OBJECTS = src/main.o include/glad/glad.o
+# environment
+USERDOMAIN = DESKTOP-7H0NV4T
+# 'override' directive
+GNUMAKEFLAGS := 
+# makefile (from 'Makefile', line 2)
+INCDIRS = -Iinclude
+# environment
+OS = Windows_NT
+# makefile
+.DEFAULT_GOAL := all
+# default
+MAKE_VERSION := 4.3
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# environment
+CG_INC_PATH = C:\Program Files (x86)\NVIDIA Corporation\Cg\include
+# environment
+USERDOMAIN_ROAMINGPROFILE = DESKTOP-7H0NV4T
+# environment
+NUMBER_OF_PROCESSORS = 6
+# environme 
+nt
+PUBLIC = C:\Users\Public
+# environment
+APPDATA = C:\Users\eetus\AppData\Roaming
+# makefile (from 'Makefile', line 3)
+CFLAGS = -Wall -Wextra -g 
+# environment
+HOMEDRIVE = C:
+# environment
+PROCESSOR_ARCHITECTURE = x86
+# makefile (from 'Makefile', line 4)
+LIBRARIES = -lGL -lglfw3 -lX11 -lm -lfreetype
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = C:\Users\eetus\
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+TEMP = C:\Users\eetus\AppData\Local\Temp
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\e21f9cf83802f1480f6afae7a57c4916-1.67.2-main-sock
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+SESSIONNAME = Console
+# environment
+CLOUDSDK_METRICS_ENVIRONMENT = cloudcode.vscode
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync load
+# environment
+MIC_LD_LIBRARY_PATH = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\compiler\lib\mic
+# environment
+PROCESSOR_REVISION = 9e0a
+# makefile (from 'Makefile', line 1)
+CC = gcc
+# environment
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
+# variable set hash-table stats:
+# Load=118/1024=12%, Rehash=0, Collisions=24/155=15%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# src (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/src, mtime 1654424299): 4 files, no impossibilities so far.
+# . (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl, mtime 1654424235): 11 files, no impossibilities.
+# include/glad (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/include/glad, mtime 1654424300): 3 files, no impossibilities so far.
+
+# 18 files, no impossibilities in 3 directories.
+
+# Implicit Rules
+
+%.o: %.c
+#  recipe to execute (from 'Makefile', line 17):
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
+
+# 1 implicit rules, 0 (0.0%) terminal.
+# Files
+
+include/glad/glad.o: include/glad/glad.c
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'include/glad/glad'
+#  Last modified 2022-06-05 13:18:20
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 17):
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-06-05 13:17:00
+#  File has been updated.
+#  Successfully updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 20):
+	rm -rf $(BINARY) $(OBJECTS)
+
+# Not a target:
+src/main.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-06-05 13:17:00
+#  File has been updated.
+#  Successfully updated.
+
+src/main.o: src/main.c
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'src/main'
+#  Last modified 2022-06-05 13:18:19
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 17):
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+all: build/main
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/7=0%
+
+build/main: src/main.o include/glad/glad.o
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  Last modified 2022-06-05 13:17:00
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := build/main
+# automatic
+# * := 
+# automatic
+# < := src/main.o
+# automatic
+# + := src/main.o include/glad/glad.o
+# automatic
+# % := 
+# automatic
+# ^ := src/main.o include/glad/glad.o
+# automatic
+# ? := src/main.o include/glad/glad.o
+# automatic
+# | := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=6/15=40%
+#  recipe to execute (from 'Makefile', line 14):
+	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
+
+# Not a target:
+include/glad/glad.c:
+#  Implicit rule search has been done.
+#  Last modified 2021-04-25 19:12:00
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=10/1024=1%, Rehash=0, Collisions=0/32=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 28 / storage = 248 B / avg = 8 B
+# current buf: size = 8174 B / used = 248 B / count = 28 / avg = 8 B
+
+# strcache performance: lookups = 45 / hit rate = 37%
+# hash-table stats:
+# Load=28/8192=0%, Rehash=0, Collisions=0/45=0%
+# Finished Make data base on Sun Jun 05 13:20:02 2022
+
+ 

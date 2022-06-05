@@ -8,6 +8,13 @@ OBJECTS=src/main.o include/glad/glad.o
 
 BINARY=build/main
 
+OSFLAG:=
+ifeq ($(OS), Windows_NT)
+	CC=gcc.exe
+	LIBRARIES=-Linclude -lopengl32 -lglfw3dll -lfreetype
+endif
+
+
 all: $(BINARY)
 
 $(BINARY): $(OBJECTS)
@@ -17,4 +24,8 @@ $(BINARY): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 clean:
-	rm -rf $(BINARY) $(OBJECTS)
+	ifeq($(OSFLAG), WIN)
+		DEL $(BINARY) $(OBJECTS)
+	else
+		rm -rf $(BINARY) $(OBJECTS)
+	endif
