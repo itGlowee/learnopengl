@@ -20,7 +20,6 @@ endif
 
 all: $(BINARY)
 
-
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
