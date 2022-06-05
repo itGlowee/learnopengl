@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <malloc.h>
-#define WINDOWWIDTH 800
-#define WINDOWHEIGHT 600
+unsigned short WINDOWWIDTH  = 1000;
+unsigned short WINDOWHEIGHT = 800;
 #define CHARSETSIZE 128
 
 
@@ -26,6 +26,8 @@
 
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
+    WINDOWWIDTH = width;
+    WINDOWHEIGHT = height;
 }
 
 void processInput(GLFWwindow *window) {
@@ -119,7 +121,7 @@ struct Character {
 
 void RenderText(unsigned int shader, char *text, float x, float y, float scale, vec3 color) {
 	glUseProgram(shader);
-    glUniform3f(glGetUniformLocation(shader, "textColor"), 1.0f, 1.0f, 1.0f);
+    glUniform3f(glGetUniformLocation(shader, "textColor"), color[0], color[1], color[2]);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
@@ -184,7 +186,6 @@ int main() {
 
     unsigned int myShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
     mat4 projection;
-    //glm_ortho_default_rh_no(1.0f, projection);
     glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
 	glUseProgram(myShader);
     glUniformMatrix4fv(glGetUniformLocation(myShader, "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -260,16 +261,23 @@ int main() {
     glBindVertexArray(0);
 
 	// wireframe
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    char width[32] = "Window width: ";
+    char height[32] = "Window height: ";
+    sprintf(width, "Window width: %d", WINDOWWIDTH);
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
+        glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
+        glUniformMatrix4fv(glGetUniformLocation(myShader, "projection"), 1, GL_FALSE, &projection[0][0]);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        vec3 color = {1.0f, 1.0f, 1.0f};
-        RenderText(myShader, "This is sample text", 25.0f, 25.0f, 1.0f, color);
-        RenderText(myShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, color);
+        vec3 color = {0.7f, 0.2f, 0.7f};
+        sprintf(width, "Window width: %d", WINDOWWIDTH);
+        sprintf(height, "Window height: %d", WINDOWHEIGHT);
+        RenderText(myShader, width, 20.0f, 25.0f, 0.5f, color);
+        RenderText(myShader, height, 20.0f, 75.0f, 0.5f, color);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
