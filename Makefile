@@ -18,7 +18,6 @@ else
 	CFLAGS += -DLINUX=1
 endif
 
-
 all: $(BINARY)
 
 
