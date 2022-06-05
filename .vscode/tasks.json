@@ -18,7 +18,7 @@
                 "-lfreetype"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}",
             },
             "problemMatcher": [
                 "$gcc"
@@ -45,7 +45,7 @@
                 "-lfreetype"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"

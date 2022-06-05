@@ -6,6 +6,7 @@
 #include FT_FREETYPE_H
 
 #include <stdio.h>
+#include <malloc.h>
 #define WINDOWWIDTH 800
 #define WINDOWHEIGHT 600
 #define CHARSETSIZE 128
@@ -32,6 +33,77 @@ void processInput(GLFWwindow *window) {
         glfwSetWindowShouldClose(window, 1);
     }
 }
+unsigned int Shader (const char *vertexPath, const char *fragmentPath) {
+
+	FILE *vertexFile = fopen(vertexPath, "r");
+	FILE *fragmentFile = fopen(fragmentPath, "r");
+
+    char vertexCode[4096];
+    char fragmentCode[4096];
+
+    if (!vertexFile || !fragmentFile) {
+        printf("Loading shaderfiles failed :(\n");
+        return 0;
+    }
+    int ch = getc(vertexFile);
+    int i;
+    for (i = 0; ch != EOF && i < 4096 -1; i++) {
+        vertexCode[i] = ch;
+        ch = getc(vertexFile);
+    }
+    fclose(vertexFile);
+    vertexCode[i] = '\0';
+
+    ch = getc(fragmentFile);
+    for (i = 0; ch != EOF && i < 4096 -1; i++) {
+        fragmentCode[i] = ch;
+        ch = getc(fragmentFile);
+    }
+    fclose(fragmentFile);
+    fragmentCode[i] = '\0';
+
+    const char *vertexCodeConst = vertexCode;
+    const char *fragmentCodeConst = fragmentCode;
+
+    unsigned int vertex, fragment;
+    int success;
+    char infoLog[512];
+
+    vertex = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertex, 1, &vertexCodeConst, NULL);
+    glCompileShader(vertex);
+
+    glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+        printf("ERROR::SHADER:VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
+    }
+	fragment = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment, 1, &fragmentCodeConst, NULL);
+	glCompileShader(fragment);
+	glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+		printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
+	}        
+	unsigned int ID; // Program id
+    ID = glCreateProgram();
+
+    glAttachShader(ID, vertex);
+    glAttachShader(ID, fragment);
+    glLinkProgram(ID);
+
+    glGetProgramiv(ID, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(ID, 512, NULL, infoLog);
+        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
+    }
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
+
+	return ID;
+}
+
 
 unsigned int VAO, VBO, EBO;
 
@@ -72,6 +144,7 @@ unsigned int indices[] = {  // note that we start from 0!
 };  
 
 int main() {
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -183,52 +256,8 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 	glEnableVertexAttribArray(0);
 
-	const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
-	}
-	const char *fragmentShaderSource =
-	"#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-	"}\0";
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
-	}
-
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
-	}
-	glUseProgram(shaderProgram);
+    unsigned int myShader = Shader("shaders/orange.vs", "shaders/orange.fs");
+	glUseProgram(myShader);
 
 	// wireframe
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -244,3 +273,4 @@ int main() {
     glfwTerminate();
     return 0;
 }
+
