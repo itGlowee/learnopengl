@@ -33,23 +33,34 @@ void processInput(GLFWwindow *window) {
     }
 }
 
-struct ivec2 {
-    int a, b;
-};
+unsigned int VAO, VBO;
 
 struct Character {
     unsigned int TextureID;
-    struct ivec2 Size;
-    struct ivec2 Bearing;
+    ivec2 Size;
+    ivec2 Bearing;
     unsigned int Advance;
 } charset[CHARSETSIZE];
 
+// TODO: Finish this when shader system is complete.
+// https://learnopengl.com/In-Practice/Text-Rendering
+/*
+void RenderText(Shader &s, char *text, float x, float y, float scale, vec3 color) {
+    s.Use();
+    glUniform3f(glGetUniformLocation(s.Program, "textColor"), color.x, color.y, color.z);
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(VAO);
+
+    for (int i = 0; text[i] != '\0'; i++) {
+        Character ch = charset[text[i]];
+
+    }
+
+
+}
+*/
+
 int main() {
-
-    vec2 vec = { 0.2f, 0.3f};
-    vec2 Vec2 = { 1.2f, 0.4f };
-    glm_vec2_add(vec, Vec2, vec);
-
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -85,6 +96,21 @@ int main() {
     FT_Set_Pixel_Sizes(face, 0, 48);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    mat4 projection;
+    glm_ortho(0.0f, WINDOWWIDTH, 0.0f, WINDOWHEIGHT, 0.1f, 1000.0f, projection);
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
     for (unsigned char c = 0; c < CHARSETSIZE; c++) {
 
