@@ -273,11 +273,11 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
 
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        vec3 color = {0.7f, 0.2f, 0.7f};
-        sprintf(width, "Window width: %d", WINDOWWIDTH);
-        sprintf(height, "Window height: %d", WINDOWHEIGHT);
+        vec3 color = {1.0f, 1.0f, 1.0f};
+        sprintf(width, "Window x: %d", WINDOWWIDTH);
+        sprintf(height, "Window y: %d", WINDOWHEIGHT);
         RenderText(myShader, width, 20.0f, 25.0f, 0.5f, color);
-        RenderText(myShader, height, 20.0f, 75.0f, 0.5f, color);
+        RenderText(myShader, height, 20.0f, 50.0f, 0.5f, color);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
