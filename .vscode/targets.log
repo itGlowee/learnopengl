@@ -7,7 +7,7 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # There is NO WARRANTY, to the extent permitted by law.
  
 
-# Make data base, printed on Sun Jun 05 13:20:02 2022
+# Make data base, printed on Sun Jun 05 13:59:29 2022
 
 # Variables
 
@@ -59,8 +59,8 @@ FPS_BROWSER_USER_PROFILE_STRING = Default
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
 .VARIABLES := 
-# makefile (from 'Makefile', line 9)
-BINARY = build/main
+# makefile (from 'Makefile', line 15)
+BINARY := build/main.exe
 # automatic
 %D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
 # automatic
@@ -94,7 +94,7 @@ CURDIR := e:/Desktop/My Bubble/Programming/OpenGL/learnopengl
 # environment
 VSCODE_PIPE_LOGGING = true
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # automatic
 *D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
 # environment
@@ -121,6 +121,8 @@ VSCODE_PID = 19296
 ?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
 # automatic
 *F = $(notdir $*)
+# makefile (from 'Makefile', line 11)
+OSFLAG := 
 # automatic
 <D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
 # environment
@@ -178,7 +180,8 @@ PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW
 # environment
 CG_LIB_PATH = C:\Program Files (x86)\NVIDIA Corporation\Cg\lib
 # environment
-ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+ORIGINAL_XDG_CURRENT_DESKTOP = un 
+defined
 # makefile (from 'Makefile', line 7)
 OBJECTS = src/main.o include/glad/glad.o
 # environment
@@ -201,8 +204,7 @@ CG_INC_PATH = C:\Program Files (x86)\NVIDIA Corporation\Cg\include
 USERDOMAIN_ROAMINGPROFILE = DESKTOP-7H0NV4T
 # environment
 NUMBER_OF_PROCESSORS = 6
-# environme 
-nt
+# environment
 PUBLIC = C:\Users\Public
 # environment
 APPDATA = C:\Users\eetus\AppData\Roaming
@@ -212,8 +214,8 @@ CFLAGS = -Wall -Wextra -g
 HOMEDRIVE = C:
 # environment
 PROCESSOR_ARCHITECTURE = x86
-# makefile (from 'Makefile', line 4)
-LIBRARIES = -lGL -lglfw3 -lX11 -lm -lfreetype
+# makefile (from 'Makefile', line 14)
+LIBRARIES = -Linclude -lopengl32 -lglfw3dll -lfreetype
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
 # environment
@@ -244,12 +246,12 @@ CLOUDSDK_METRICS_ENVIRONMENT = cloudcode.vscode
 MIC_LD_LIBRARY_PATH = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\compiler\lib\mic
 # environment
 PROCESSOR_REVISION = 9e0a
-# makefile (from 'Makefile', line 1)
-CC = gcc
+# makefile (from 'Makefile', line 13)
+CC = gcc.exe
 # environment
 PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 # variable set hash-table stats:
-# Load=118/1024=12%, Rehash=0, Collisions=24/155=15%
+# Load=119/1024=12%, Rehash=0, Collisions=30/156=19%
 
 # Pattern-specific Variable Values
 
@@ -257,16 +259,17 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 
 # Directories
 
-# src (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/src, mtime 1654424299): 4 files, no impossibilities so far.
+# src (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/src, mtime 1654426436): 4 files, no impossibilities so far.
 # . (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl, mtime 1654424235): 11 files, no impossibilities.
-# include/glad (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/include/glad, mtime 1654424300): 3 files, no impossibilities so far.
+# include/glad (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/include/glad, mtime 1654426437): 3 files, no impossibilities so far.
 
 # 18 files, no impossibilities in 3 directories.
 
+ 
 # Implicit Rules
 
 %.o: %.c
-#  recipe to execute (from 'Makefile', line 17):
+#  recipe to execute (from 'Makefile', line 25):
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 # 1 implicit rules, 0 (0.0%) terminal.
@@ -275,25 +278,25 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 include/glad/glad.o: include/glad/glad.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'include/glad/glad'
-#  Last modified 2022-06-05 13:18:20
+#  Last modified 2022-06-05 13:53:57
 #  File has been updated.
 #  Successfully updated.
-#  recipe to execute (from 'Makefile', line 17):
+#  recipe to execute (from 'Makefile', line 25):
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-06-05 13:17:00
+#  Last modified 2022-06-05 13:58:32
 #  File has been updated.
 #  Successfully updated.
 
-clean:
+clean::
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 20):
-	rm -rf $(BINARY) $(OBJECTS)
+#  recipe to execute (from 'Makefile', line 29):
+	DEL $(subst /,\,$(BINARY) $(OBJECTS))
 
 # Not a target:
 src/main.c:
@@ -302,13 +305,21 @@ src/main.c:
 #  File has been updated.
 #  Successfully updated.
 
+build/main.exe: src/main.o include/glad/glad.o
+#  Implicit rule search has not been done.
+#  Last modified 2022-06-05 13:56:45
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 22):
+	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
+
 src/main.o: src/main.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/main'
-#  Last modified 2022-06-05 13:18:19
+#  Last modified 2022-06-05 13:53:56
 #  File has been updated.
 #  Successfully updated.
-#  recipe to execute (from 'Makefile', line 17):
+#  recipe to execute (from 'Makefile', line 25):
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 # Not a target:
@@ -317,41 +328,19 @@ src/main.o: src/main.c
 #  Modification time never checked.
 #  File has not been updated.
 
-all: build/main
+all: build/main.exe
 #  Command line target.
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
-#  Needs to be updated (-q is set).
-# variable set hash-table stats:
-# Load=0/32=0%, Rehash=0, Collisions=0/7=0%
+#  Successfully updated.
 
-build/main: src/main.o include/glad/glad.o
+run: build/main.exe
 #  Implicit rule search has not been done.
-#  Implicit/static pattern stem: ''
-#  Last modified 2022-06-05 13:17:00
-#  File has been updated.
-#  Needs to be updated (-q is set).
-# automatic
-# @ := build/main
-# automatic
-# * := 
-# automatic
-# < := src/main.o
-# automatic
-# + := src/main.o include/glad/glad.o
-# automatic
-# % := 
-# automatic
-# ^ := src/main.o include/glad/glad.o
-# automatic
-# ? := src/main.o include/glad/glad.o
-# automatic
-# | := 
-# variable set hash-table stats:
-# Load=8/32=25%, Rehash=0, Collisions=6/15=40%
-#  recipe to execute (from 'Makefile', line 14):
-	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 31):
+	$(subst /,\,$(BINARY))
 
 # Not a target:
 include/glad/glad.c:
@@ -360,26 +349,21 @@ include/glad/glad.c:
 #  File has been updated.
 #  Successfully updated.
 
-# Not a target:
-.SUFFIXES:
-#  Implicit rule search has not been done.
-#  Modification time never checked.
-#  File has not been updated.
-
 # files hash-table stats:
-# Load=10/1024=1%, Rehash=0, Collisions=0/32=0%
+# Load=11/1024=1%, Rehash=0, Collisions=0/34=0%
 # VPATH Search Paths
 
 # No 'vpath' search paths.
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 28 / storage = 248 B / avg = 8 B
-# current buf: size = 8174 B / used = 248 B / count = 28 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 29 / storage = 256 B / avg = 8 B
+# current buf: size = 8174 B / used = 256 B / count = 29 / avg = 8 B
 
-# strcache performance: lookups = 45 / hit rate = 37%
+# strcache performance: lookups = 47 / 
+ hit rate = 38%
 # hash-table stats:
-# Load=28/8192=0%, Rehash=0, Collisions=0/45=0%
-# Finished Make data base on Sun Jun 05 13:20:02 2022
+# Load=29/8192=0%, Rehash=0, Collisions=0/47=0%
+# Finished Make data base on Sun Jun 05 13:59:29 2022
 
  

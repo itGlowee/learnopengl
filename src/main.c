@@ -9,14 +9,14 @@
 #define WINDOWHEIGHT 600
 #define CHARSETSIZE 128
 
-#define WINDOWS 0
-#define LINUX 1
 
 #if WINDOWS
 #include <windows.h>
 #define FONTS "C:/Windows/Fonts/"
+#define DEFAULTFONT "arial.ttf"
 #elif LINUX
 #define FONTS "/usr/share/fonts/truetype/"
+#define DEFAULTFONT "ubuntu/Ubuntu-Th.ttf"
 #endif
 
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
@@ -67,7 +67,7 @@ int main() {
         return -1;
     }
     FT_Face face;
-    if (FT_New_Face(ft, FONTS "ubuntu/Ubuntu-Th.ttf", 0, &face))
+    if (FT_New_Face(ft, FONTS DEFAULTFONT, 0, &face))
     {
         printf("ERROR::FREETYPE: Failed to load font\n");
         return -1;

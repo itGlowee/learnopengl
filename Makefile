@@ -12,6 +12,10 @@ OSFLAG:=
 ifeq ($(OS), Windows_NT)
 	CC=gcc.exe
 	LIBRARIES=-Linclude -lopengl32 -lglfw3dll -lfreetype
+	BINARY := $(BINARY).exe
+	CFLAGS += -DWINDOWS=1
+else
+	CFLAGS += -DLINUX=1
 endif
 
 
@@ -25,8 +29,13 @@ $(BINARY): $(OBJECTS)
 
 ifeq ($(OS), Windows_NT)
 clean::
-	DEL $(BINARY) $(OBJECTS)
+	DEL $(subst /,\,$(BINARY) $(OBJECTS))
+run: $(BINARY)
+	$(subst /,\,$(BINARY))
 else
 clean::
 	rm -rf $(BINARY) $(OBJECTS)
+run: $(BINARY)
+	$(BINARY)
 endif
+
