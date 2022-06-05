@@ -21,8 +21,6 @@ endif
 
 all: $(BINARY)
 
-$(BINARY): $(OBJECTS)
-	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
@@ -32,10 +30,16 @@ clean::
 	DEL $(subst /,\,$(BINARY) $(OBJECTS))
 run: $(BINARY)
 	$(subst /,\,$(BINARY))
+$(BINARY): $(OBJECTS)
+	IF not exist "build" (mkdir build) 
+	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 else
 clean::
 	rm -rf $(BINARY) $(OBJECTS)
 run: $(BINARY)
 	$(BINARY)
+$(BINARY): $(OBJECTS)
+	if [ ! -d "build" ]; then mkdir build; 
+	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 endif
 

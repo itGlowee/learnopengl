@@ -17,6 +17,9 @@
 #elif LINUX
 #define FONTS "/usr/share/fonts/truetype/"
 #define DEFAULTFONT "ubuntu/Ubuntu-Th.ttf"
+#else
+#define FONTS "/usr/share/fonts/truetype/"
+#define DEFAULTFONT "ubuntu/Ubuntu-Th.ttf"
 #endif
 
 void framebufferSizeCallback(GLFWwindow *window, int width, int height) {

@@ -7,7 +7,7 @@ make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --quest
 # There is NO WARRANTY, to the extent permitted by law.
  
 
-# Make data base, printed on Sun Jun 05 13:59:29 2022
+# Make data base, printed on Sun Jun 05 14:14:00 2022
 
 # Variables
 
@@ -136,7 +136,8 @@ PROGRAMDATA = C:\ProgramData
 # default
 SHELL := sh.exe
 # environment
-HOMEPATH = \Users\eetus
+HOMEPATH = \U 
+sers\eetus
 # default
 MAKECMDGOALS := all
 # environment
@@ -160,7 +161,8 @@ MAKEFILES :=
 # environment
 PROMPT = $P$G
 # environment
-CHOCOLATEYLASTPATHUPDATE = 132971862980633893
+CHOCOLATEYLASTPATHUPDATE = 132971862980 
+633893
 # environment
 LOGONSERVER = \\DESKTOP-7H0NV4T
 # environment
@@ -180,8 +182,7 @@ PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW
 # environment
 CG_LIB_PATH = C:\Program Files (x86)\NVIDIA Corporation\Cg\lib
 # environment
-ORIGINAL_XDG_CURRENT_DESKTOP = un 
-defined
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
 # makefile (from 'Makefile', line 7)
 OBJECTS = src/main.o include/glad/glad.o
 # environment
@@ -208,8 +209,8 @@ NUMBER_OF_PROCESSORS = 6
 PUBLIC = C:\Users\Public
 # environment
 APPDATA = C:\Users\eetus\AppData\Roaming
-# makefile (from 'Makefile', line 3)
-CFLAGS = -Wall -Wextra -g 
+# makefile (from 'Makefile', line 16)
+CFLAGS = -Wall -Wextra -g  -DWINDOWS=1
 # environment
 HOMEDRIVE = C:
 # environment
@@ -251,7 +252,8 @@ CC = gcc.exe
 # environment
 PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 # variable set hash-table stats:
-# Load=119/1024=12%, Rehash=0, Collisions=30/156=19%
+# Load=119/1024=12%, Rehash=0, Collisions=30/1 
+58=19%
 
 # Pattern-specific Variable Values
 
@@ -259,17 +261,16 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 
 # Directories
 
-# src (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/src, mtime 1654426436): 4 files, no impossibilities so far.
+# src (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/src, mtime 1654427590): 3 files, no impossibilities so far.
 # . (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl, mtime 1654424235): 11 files, no impossibilities.
-# include/glad (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/include/glad, mtime 1654426437): 3 files, no impossibilities so far.
+# include/glad (key e:/Desktop/My Bubble/Programming/OpenGL/learnopengl/include/glad, mtime 1654427590): 3 files, no impossibilities so far.
 
-# 18 files, no impossibilities in 3 directories.
+# 17 files, no impossibilities in 3 directories.
 
- 
 # Implicit Rules
 
 %.o: %.c
-#  recipe to execute (from 'Makefile', line 25):
+#  recipe to execute (from 'Makefile', line 26):
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 # 1 implicit rules, 0 (0.0%) terminal.
@@ -278,16 +279,16 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 include/glad/glad.o: include/glad/glad.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'include/glad/glad'
-#  Last modified 2022-06-05 13:53:57
+#  Last modified 2022-06-05 14:13:11
 #  File has been updated.
 #  Successfully updated.
-#  recipe to execute (from 'Makefile', line 25):
+#  recipe to execute (from 'Makefile', line 26):
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
-#  Last modified 2022-06-05 13:58:32
+#  Last modified 2022-06-05 14:12:50
 #  File has been updated.
 #  Successfully updated.
 
@@ -295,31 +296,33 @@ clean::
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 29):
+#  recipe to execute (from 'Makefile', line 30):
 	DEL $(subst /,\,$(BINARY) $(OBJECTS))
 
 # Not a target:
 src/main.c:
 #  Implicit rule search has been done.
-#  Last modified 2022-06-05 13:17:00
+#  Last modified 2022-06-05 14:02:09
 #  File has been updated.
 #  Successfully updated.
 
-build/main.exe: src/main.o include/glad/glad.o
+build/main.exe: src 
+/main.o include/glad/glad.o
 #  Implicit rule search has not been done.
-#  Last modified 2022-06-05 13:56:45
+#  Last modified 2022-06-05 14:13:11
 #  File has been updated.
 #  Successfully updated.
-#  recipe to execute (from 'Makefile', line 22):
+#  recipe to execute (from 'Makefile', line 34):
+	IF not exist "build" (mkdir build) 
 	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 
 src/main.o: src/main.c
 #  Implicit rule search has been done.
 #  Implicit/static pattern stem: 'src/main'
-#  Last modified 2022-06-05 13:53:56
+#  Last modified 2022-06-05 14:13:10
 #  File has been updated.
 #  Successfully updated.
-#  recipe to execute (from 'Makefile', line 25):
+#  recipe to execute (from 'Makefile', line 26):
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
 # Not a target:
@@ -339,7 +342,7 @@ run: build/main.exe
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
-#  recipe to execute (from 'Makefile', line 31):
+#  recipe to execute (from 'Makefile', line 32):
 	$(subst /,\,$(BINARY))
 
 # Not a target:
@@ -357,13 +360,13 @@ include/glad/glad.c:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 29 / storage = 256 B / avg = 8 B
-# current buf: size = 8174 B / used = 256 B / count = 29 / avg = 8 B
+# strcache buffers: 1 (0) / strings = 28 / storage = 246 B / avg = 8 B
+# current buf: size = 8174 B / used = 246 B / count = 28 / 
+ avg = 8 B
 
-# strcache performance: lookups = 47 / 
- hit rate = 38%
+# strcache performance: lookups = 46 / hit rate = 39%
 # hash-table stats:
-# Load=29/8192=0%, Rehash=0, Collisions=0/47=0%
-# Finished Make data base on Sun Jun 05 13:59:29 2022
+# Load=28/8192=0%, Rehash=0, Collisions=0/46=0%
+# Finished Make data base on Sun Jun 05 14:14:00 2022
 
  
