@@ -1,5 +1,6 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
+#include <cglm/cglm.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -44,6 +45,11 @@ struct Character {
 } charset[CHARSETSIZE];
 
 int main() {
+
+    vec2 vec = { 0.2f, 0.3f};
+    vec2 Vec2 = { 1.2f, 0.4f };
+    glm_vec2_add(vec, Vec2, vec);
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
