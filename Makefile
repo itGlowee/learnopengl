@@ -39,7 +39,7 @@ clean::
 run: $(BINARY)
 	$(BINARY)
 $(BINARY): $(OBJECTS)
-	if [ ! -d "build" ]; then mkdir build; 
+	if [ ! -d "build" ]; then mkdir build; fi;
 	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 endif
 
