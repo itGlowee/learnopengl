@@ -23,9 +23,10 @@ $(BINARY): $(OBJECTS)
 %.o:%.c
 	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
 
-clean:
-	ifeq($(OSFLAG), WIN)
-		DEL $(BINARY) $(OBJECTS)
-	else
-		rm -rf $(BINARY) $(OBJECTS)
-	endif
+ifeq ($(OS), Windows_NT)
+clean::
+	DEL $(BINARY) $(OBJECTS)
+else
+clean::
+	rm -rf $(BINARY) $(OBJECTS)
+endif
