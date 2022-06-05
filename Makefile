@@ -1,7 +1,7 @@
 CC=gcc
 INCDIRS=-Iinclude
 CFLAGS=-Wall -Wextra -g 
-LIBRARIES=-Linclude -lGL -lglfw3 -lX11 -lm -lfreetype -ldl
+LIBRARIES=-Linclude -lGL -lglfw -lX11 -lm -lfreetype -ldl
 
 CFILES=src/main.c include/glad/glad.c
 OBJECTS=src/main.o include/glad/glad.o
