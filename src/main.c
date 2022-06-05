@@ -116,32 +116,44 @@ struct Character {
 
 // TODO: Finish this when shader system is complete.
 // https://learnopengl.com/In-Practice/Text-Rendering
-/*
-void RenderText(Shader &s, char *text, float x, float y, float scale, vec3 color) {
-    s.Use();
-    glUniform3f(glGetUniformLocation(s.Program, "textColor"), color.x, color.y, color.z);
+
+void RenderText(unsigned int shader, char *text, float x, float y, float scale, vec3 color) {
+	glUseProgram(shader);
+    glUniform3f(glGetUniformLocation(shader, "textColor"), 1.0f, 1.0f, 1.0f);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
 
     for (int i = 0; text[i] != '\0'; i++) {
-        Character ch = charset[text[i]];
+        struct Character ch = charset[text[i]];
+        float xpos = x + ch.Bearing[0] * scale;
+        float ypos = y - (ch.Size[1] - ch.Bearing[0]) * scale;
 
+        float w = ch.Size[0] * scale;
+        float h = ch.Size[1] * scale;
+
+        float vertices[6][4] = {
+            { xpos,     ypos + h,   0.0f, 0.0f },            
+            { xpos,     ypos,       0.0f, 1.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+
+            { xpos,     ypos + h,   0.0f, 0.0f },
+            { xpos + w, ypos,       1.0f, 1.0f },
+            { xpos + w, ypos + h,   1.0f, 0.0f }           
+        };
+
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        x += (ch.Advance >> 6) * scale;
     }
-
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
 }
-*/
-
-float vertices[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
-};
-unsigned int indices[] = {  // note that we start from 0!
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle
-};  
 
 int main() {
 
@@ -164,7 +176,19 @@ int main() {
     glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    /*
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
+
+    unsigned int myShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
+    mat4 projection;
+    //glm_ortho_default_rh_no(1.0f, projection);
+    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, 1000.0f, projection);
+	glUseProgram(myShader);
+    glUniformMatrix4fv(glGetUniformLocation(myShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+
+
+    
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
     {
@@ -181,21 +205,6 @@ int main() {
     FT_Set_Pixel_Sizes(face, 0, 48);
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    mat4 projection;
-    glm_ortho(0.0f, WINDOWWIDTH, 0.0f, WINDOWHEIGHT, 0.1f, 1000.0f, projection);
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
 
     for (unsigned char c = 0; c < CHARSETSIZE; c++) {
 
@@ -234,30 +243,19 @@ int main() {
 
         charset[c] = character;
     }
+    glBindTexture(GL_TEXTURE_2D, 0);
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  */
-
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-	glEnableVertexAttribArray(0);
-
-    unsigned int myShader = Shader("shaders/orange.vs", "shaders/orange.fs");
-	glUseProgram(myShader);
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
 	// wireframe
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -266,7 +264,10 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        vec3 color = {1.0f, 1.0f, 1.0f};
+        RenderText(myShader, "This is sample text", 25.0f, 25.0f, 1.0f, color);
+        RenderText(myShader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, color);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
