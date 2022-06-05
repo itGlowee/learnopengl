@@ -1,11 +1,11 @@
 {
     "configurations": [
     {
-        "preLaunchTask": "compileWindows",
+        "preLaunchTask": "make",
         "name": "Build and run on Windows",
         "type": "cppdbg",
         "request": "launch",
-        "program": "${workspaceFolder}/src/main.exe",
+        "program": "${workspaceFolder}/build/main.exe",
         "args": [],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",
