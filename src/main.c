@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include <math.h>
 unsigned short WINDOWWIDTH  = 300;
 unsigned short WINDOWHEIGHT = 200;
 #define CHARSETSIZE 128
@@ -237,17 +238,29 @@ int main() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    float points[] = {
+    float points1[] = {
         -0.8f, -0.8f, // point a x,y
         0.8f, 0.8f, // point b x,y
     };
 
-    float rect[] = {
-        points[0], points[1], 0.0f, // left bottom corner
-        points[2], points[1], 0.0f, // right bottom corner
-        points[0], points[3], 0.0f, // left top corner
-        points[2], points[3], 0.0f, // right top corner
+    float rect1[] = {
+        points1[0], points1[1], 0.0f, // left bottom corner
+        points1[2], points1[1], 0.0f, // right bottom corner
+        points1[0], points1[3], 0.0f, // left top corner
+        points1[2], points1[3], 0.0f, // right top corner
     };
+
+    float points2[] = {
+        25.0f, 25.0f,
+        100.0f, 100.0f
+    };
+    float rect2[] = {
+        points2[0], points2[1], 0.0f, // left bottom corner
+        points2[2], points2[1], 0.0f, // right bottom corner
+        points2[0], points2[3], 0.0f, // left top corner
+        points2[2], points2[3], 0.0f, // right top corner
+    };
+
     unsigned int indices[] = {
         0,1,2,
         2,1,3
@@ -259,6 +272,10 @@ int main() {
      *      NORMAL
      */
 
+
+    /**
+     *  rect1
+     */
     unsigned int normalVAO, normalVBO, normalEBO;
     glGenVertexArrays(1, &normalVAO);
     glGenBuffers(1, &normalVBO);
@@ -267,7 +284,7 @@ int main() {
     glBindVertexArray(normalVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rect1), rect1, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
@@ -316,8 +333,8 @@ int main() {
     // FEED SHADER THIS PROJECTION MATRIX
     glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-    unsigned int colorShader = Shader("shaders/orange.vs", "shaders/orange.fs");
-
+    unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
+    unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
 
 	// wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -325,17 +342,33 @@ int main() {
     char height[32] = "Window height: ";
     sprintf(width, "Window width: %d", WINDOWWIDTH);
     while(!glfwWindowShouldClose(window)) {
+        static float time;
         processInput(window);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(colorShader);
+        // USE RELATIVE SHADER AND SET ITS VALUES
+        glUseProgram(relativeShader);
+        glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
         glBindVertexArray(normalVAO);
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalEBO);
+
+        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(rect1), rect1, GL_STATIC_DRAW);
+        // DRAW BIG RECTANGLE
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        // LOAD RECT2
+        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(rect2), rect2, GL_STATIC_DRAW);
+
+        // USE ABSOLUTE SHADER AND SET ITS VALUES
+        glUseProgram(absoluteShader);
+        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 8.0f);
+        glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+        //glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "transform"), 1, GL_FALSE, &transform[0][0]);
+        // DRAW RECT2
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
         glUseProgram(textShader);
@@ -351,6 +384,7 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+        time += 0.001f;
     }
     glfwTerminate();
     return 0;
