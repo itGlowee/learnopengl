@@ -251,8 +251,8 @@ int main() {
     };
 
     float points2[] = {
-        25.0f, 25.0f,
-        100.0f, 100.0f
+        25.0f, 120.0f,
+        100.0f, 180.0f
     };
     float rect2[] = {
         points2[0], points2[1], 0.0f, // left bottom corner
@@ -338,12 +338,16 @@ int main() {
 
 	// wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    char width[32] = "Window width: ";
-    char height[32] = "Window height: ";
-    sprintf(width, "Window width: %d", WINDOWWIDTH);
+    char width[32];
+    char height[32];
+    char mousex[32];
+    char mousey[32];
+    double mousexpos, mouseypos;
+
     while(!glfwWindowShouldClose(window)) {
         static float time;
         processInput(window);
+        glfwGetCursorPos(window, &mousexpos, &mouseypos);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -381,6 +385,11 @@ int main() {
         sprintf(height, "Window y: %d", WINDOWHEIGHT);
         RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
         RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
+
+        sprintf(mousex, "mousex: %d", (int)mousexpos);
+        sprintf(mousey, "mousey: %d", (int)mouseypos);
+        RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
+        RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
