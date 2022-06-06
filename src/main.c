@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <malloc.h>
-unsigned short WINDOWWIDTH  = 1000;
-unsigned short WINDOWHEIGHT = 800;
+unsigned short WINDOWWIDTH  = 300;
+unsigned short WINDOWHEIGHT = 200;
 #define CHARSETSIZE 128
 
 
@@ -107,7 +107,7 @@ unsigned int Shader (const char *vertexPath, const char *fragmentPath) {
 }
 
 
-unsigned int VAO, VBO, EBO;
+unsigned int textVAO, textVBO;
 
 struct Character {
     unsigned int TextureID;
@@ -116,14 +116,12 @@ struct Character {
     unsigned int Advance;
 } charset[CHARSETSIZE];
 
-// TODO: Finish this when shader system is complete.
-// https://learnopengl.com/In-Practice/Text-Rendering
-
 void RenderText(unsigned int shader, char *text, float x, float y, float scale, vec3 color) {
 	glUseProgram(shader);
     glUniform3f(glGetUniformLocation(shader, "textColor"), color[0], color[1], color[2]);
     glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO);
+    glBindVertexArray(textVAO);
+    // glBindBuffer(GL_ARRAY_BUFFER, textVBO);
 
     for (int i = 0; text[i] != '\0'; i++) {
         struct Character ch = charset[text[i]];
@@ -145,7 +143,7 @@ void RenderText(unsigned int shader, char *text, float x, float y, float scale, 
 
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBindBuffer(GL_ARRAY_BUFFER, textVBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -179,17 +177,6 @@ int main() {
     }
     glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-
-
-    unsigned int myShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
-    mat4 projection;
-    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-	glUseProgram(myShader);
-    glUniformMatrix4fv(glGetUniformLocation(myShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-
 
     
     FT_Library ft;
@@ -250,15 +237,87 @@ int main() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    float points[] = {
+        -0.8f, -0.8f, // point a x,y
+        0.8f, 0.8f, // point b x,y
+    };
+
+    float rect[] = {
+        points[0], points[1], 0.0f, // left bottom corner
+        points[2], points[1], 0.0f, // right bottom corner
+        points[0], points[3], 0.0f, // left top corner
+        points[2], points[3], 0.0f, // right top corner
+    };
+    unsigned int indices[] = {
+        0,1,2,
+        2,1,3
+    };
+
+
+    
+    /**
+     *      NORMAL
+     */
+
+    unsigned int normalVAO, normalVBO, normalEBO;
+    glGenVertexArrays(1, &normalVAO);
+    glGenBuffers(1, &normalVBO);
+    glGenBuffers(1, &normalEBO);
+
+    glBindVertexArray(normalVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+
+
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+
+    /**
+     *      FOR TEXT
+     */
+
+    // GENERATE VAO
+    glGenVertexArrays(1, &textVAO);
+    // GENERATE VBO
+    glGenBuffers(1, &textVBO);
+    // BIND VAO
+    glBindVertexArray(textVAO);
+    // BIND VBO
+    glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+    // ALLOCATE MEMORY FOR TEXT TRIANGLES
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    // ???
+    glEnableVertexAttribArray(0);
+    // SPECIFY HOW TO INTERPRET THE VERTEX BUFFER DATA. THIS IS STORED IN CURRENTLY BOUND VAO!
+    // index, size, type, normalized, stride, offset
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // UNBIND VAO
+    glBindVertexArray(0);
+
+
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
+    // LOAD TEXTSHADERS
+    unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
+    mat4 projection;
+    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
+    // FEED SHADER THIS PROJECTION MATRIX
+    glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+
+    unsigned int colorShader = Shader("shaders/orange.vs", "shaders/orange.fs");
+
 
 	// wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -267,17 +326,29 @@ int main() {
     sprintf(width, "Window width: %d", WINDOWWIDTH);
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
-        glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-        glUniformMatrix4fv(glGetUniformLocation(myShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glUseProgram(colorShader);
+        glBindVertexArray(normalVAO);
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalEBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        glUseProgram(textShader);
+        glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
+        // FEED SHADER THIS PROJECTION MATRIX
+        glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+
         vec3 color = {1.0f, 1.0f, 1.0f};
         sprintf(width, "Window x: %d", WINDOWWIDTH);
         sprintf(height, "Window y: %d", WINDOWHEIGHT);
-        RenderText(myShader, width, 20.0f, 25.0f, 0.5f, color);
-        RenderText(myShader, height, 20.0f, 50.0f, 0.5f, color);
+        RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
+        RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
