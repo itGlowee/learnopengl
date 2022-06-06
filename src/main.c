@@ -345,7 +345,8 @@ int main() {
     double mousexpos, mouseypos;
 
     while(!glfwWindowShouldClose(window)) {
-        static float time;
+        static double deltaTime;
+        double time = glfwGetTime();
         processInput(window);
         glfwGetCursorPos(window, &mousexpos, &mouseypos);
 
@@ -393,7 +394,7 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-        time += 0.001f;
+        deltaTime = glfwGetTime() - time;
     }
     glfwTerminate();
     return 0;
