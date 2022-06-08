@@ -37,6 +37,10 @@ struct Keys {
     unsigned int down_arrow  :   1;
     unsigned int escape      :   1;
 } keyboard;
+struct Mouse {
+    unsigned int left       : 1;
+    unsigned int right      : 1;
+} mouse;
 
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -75,10 +79,18 @@ void processInput(GLFWwindow *window) {
     else {
         keyboard.right_arrow = 0;
     }
-
-
-
-
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        mouse.left = 1;
+    }
+    else {
+        mouse.left = 0;
+    }
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        mouse.right = 1;
+    }
+    else {
+        mouse.right = 0;
+    }
 }
 unsigned int Shader (const char *vertexPath, const char *fragmentPath) {
 
@@ -348,115 +360,139 @@ int main() {
     struct Rectangle rect2;
     makeRectangle(p1, p2, &rect2);
 
-        /**
-         *      FOR TEXT
-         */
+    p1[0] = 100.0f; p1[1] = 200.0f;
+    p2[0] = 200.0f; p2[1] = 400.0f;
+    struct Rectangle rect3;
+    makeRectangle(p1, p2, &rect3);
 
-        // GENERATE VAO
-        glGenVertexArrays(1, &textVAO);
-        // GENERATE VBO
-        glGenBuffers(1, &textVBO);
-        // BIND VAO
-        glBindVertexArray(textVAO);
-        // BIND VBO
-        glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-        // ALLOCATE MEMORY FOR TEXT TRIANGLES
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-        // ???
-        glEnableVertexAttribArray(0);
-        // SPECIFY HOW TO INTERPRET THE VERTEX BUFFER DATA. THIS IS STORED IN CURRENTLY BOUND VAO!
-        // index, size, type, normalized, stride, offset
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // UNBIND VAO
-        glBindVertexArray(0);
+    struct Rectangle clickRect;
+    int size = 10;
+    p1[0] = -size;
+    p1[1] = -size;
+    p2[0] = size;
+    p2[1] = size;
+    makeRectangle(p1, p2, &clickRect);
 
 
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    /**
+     *      FOR TEXT
+     */
 
-        // LOAD TEXTSHADERS
-        unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
-        mat4 projection;
+    // GENERATE VAO
+    glGenVertexArrays(1, &textVAO);
+    // GENERATE VBO
+    glGenBuffers(1, &textVBO);
+    // BIND VAO
+    glBindVertexArray(textVAO);
+    // BIND VBO
+    glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+    // ALLOCATE MEMORY FOR TEXT TRIANGLES
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    // ???
+    glEnableVertexAttribArray(0);
+    // SPECIFY HOW TO INTERPRET THE VERTEX BUFFER DATA. THIS IS STORED IN CURRENTLY BOUND VAO!
+    // index, size, type, normalized, stride, offset
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // UNBIND VAO
+    glBindVertexArray(0);
+
+
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
+    // LOAD TEXTSHADERS
+    unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
+    mat4 projection;
+    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
+    // FEED SHADER THIS PROJECTION MATRIX
+    glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+
+    unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
+    unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
+
+    // wireframe
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    char width[32];
+    char height[32];
+    char mousex[32];
+    char mousey[32];
+    double mousexpos, mouseypos;
+
+    while(!glfwWindowShouldClose(window)) {
+        static double deltaTime;
+        static unsigned short int c;
+        static vec2 movement;
+        double time = glfwGetTime();
+        if ((c++ % 10) == 0){
+            printf("Time: %4.1lf\n", time);
+        }
+        processInput(window);
+        if (keyboard.left_arrow) {
+            movement[0] -= 10.0f;
+        }
+        if (keyboard.right_arrow) {
+            movement[0] += 10.0f;
+        }
+        if (keyboard.up_arrow) {
+            movement[1] += 10.0f;
+        }
+        if (keyboard.down_arrow) {
+            movement[1] -= 10.0f;
+        }
+        glfwGetCursorPos(window, &mousexpos, &mouseypos);
+        // calculate projection
         glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-        // FEED SHADER THIS PROJECTION MATRIX
+
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(absoluteShader);
+        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), movement[0], movement[1]);
+        bindBuffers(&rect2);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+        bindBuffers(&clickRect);
+        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mousexpos, WINDOWHEIGHT - mouseypos);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+
+        bindBuffers(&rect3);
+        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        
+/*
+        glUseProgram(relativeShader);
+        glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
+        bindBuffers(&rect1);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+*/
+
+        glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-        unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
-        unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
+        vec3 color = {1.0f, 1.0f, 1.0f};
+        sprintf(width, "Window x: %d", WINDOWWIDTH);
+        sprintf(height, "Window y: %d", WINDOWHEIGHT);
+        RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
+        RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
 
-        // wireframe
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        char width[32];
-        char height[32];
-        char mousex[32];
-        char mousey[32];
-        double mousexpos, mouseypos;
+        sprintf(mousex, "mousex: %d", (int)mousexpos);
+        sprintf(mousey, "mousey: %d", (int)mouseypos);
+        RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
+        RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
 
-        while(!glfwWindowShouldClose(window)) {
-            static double deltaTime;
-            static unsigned short int c;
-            static vec2 movement;
-            double time = glfwGetTime();
-            if ((c++ % 10) == 0){
-                printf("Time: %4.1lf\n", time);
-            }
-            processInput(window);
-            if (keyboard.left_arrow) {
-                movement[0] -= 10.0f;
-            }
-            if (keyboard.right_arrow) {
-                movement[0] += 10.0f;
-            }
-            if (keyboard.up_arrow) {
-                movement[1] += 10.0f;
-            }
-            if (keyboard.down_arrow) {
-                movement[1] -= 10.0f;
-            }
-            glfwGetCursorPos(window, &mousexpos, &mouseypos);
-            // calculate projection
-            glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-
-            glUseProgram(relativeShader);
-            glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
-            bindBuffers(&rect1);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
-            glUseProgram(absoluteShader);
-            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
-            glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-            glUniform2f(glGetUniformLocation(absoluteShader, "transform"), movement[0], movement[1]);
-            bindBuffers(&rect2);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
-
-            glUseProgram(textShader);
-            glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-
-            vec3 color = {1.0f, 1.0f, 1.0f};
-            sprintf(width, "Window x: %d", WINDOWWIDTH);
-            sprintf(height, "Window y: %d", WINDOWHEIGHT);
-            RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
-            RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
-
-            sprintf(mousex, "mousex: %d", (int)mousexpos);
-            sprintf(mousey, "mousey: %d", (int)mouseypos);
-            RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
-            RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
-
-            glfwSwapBuffers(window);
-            glfwPollEvents();
-            deltaTime = glfwGetTime() - time;
-        }
-        glfwTerminate();
-        return 0;
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+        deltaTime = glfwGetTime() - time;
     }
+    glfwTerminate();
+    return 0;
+}
 

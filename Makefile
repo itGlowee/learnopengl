@@ -41,3 +41,5 @@ $(BINARY): $(OBJECTS)
 	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 endif
 
+fast::
+	$(CC) -O3 -o $(BINARY) $(INCDIRS) $(CFILES) $(LIBRARIES)
