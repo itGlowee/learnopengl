@@ -30,11 +30,55 @@ void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
     WINDOWWIDTH = width;
     WINDOWHEIGHT = height;
 }
+struct Keys {
+    unsigned int left_arrow  :   1;
+    unsigned int up_arrow    :   1;
+    unsigned int right_arrow :   1;
+    unsigned int down_arrow  :   1;
+    unsigned int escape      :   1;
+} keyboard;
 
 void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, 1);
+        keyboard.escape = 1;
     }
+    else {
+        keyboard.escape = 0;
+    }
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        keyboard.left_arrow = 1;
+    }
+    else {
+        keyboard.left_arrow = 0;
+    }
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        keyboard.right_arrow = 1;
+    }
+    else {
+        keyboard.right_arrow = 0;
+    }
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        keyboard.up_arrow = 1;
+    }
+    else {
+        keyboard.up_arrow = 0;
+    }
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        keyboard.down_arrow = 1;
+    }
+    else {
+        keyboard.down_arrow = 0;
+    }
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    }
+    else {
+        keyboard.right_arrow = 0;
+    }
+
+
+
+
 }
 unsigned int Shader (const char *vertexPath, const char *fragmentPath) {
 
@@ -352,8 +396,25 @@ int main() {
 
         while(!glfwWindowShouldClose(window)) {
             static double deltaTime;
+            static unsigned short int c;
+            static vec2 movement;
             double time = glfwGetTime();
+            if ((c++ % 10) == 0){
+                printf("Time: %4.1lf\n", time);
+            }
             processInput(window);
+            if (keyboard.left_arrow) {
+                movement[0] -= 10.0f;
+            }
+            if (keyboard.right_arrow) {
+                movement[0] += 10.0f;
+            }
+            if (keyboard.up_arrow) {
+                movement[1] += 10.0f;
+            }
+            if (keyboard.down_arrow) {
+                movement[1] -= 10.0f;
+            }
             glfwGetCursorPos(window, &mousexpos, &mouseypos);
             // calculate projection
             glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
@@ -371,7 +432,7 @@ int main() {
             glUseProgram(absoluteShader);
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
             glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-            glUniform2f(glGetUniformLocation(absoluteShader, "transform"), time, 0.0f);
+            glUniform2f(glGetUniformLocation(absoluteShader, "transform"), movement[0], movement[1]);
             bindBuffers(&rect2);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
