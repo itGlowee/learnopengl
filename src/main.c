@@ -158,8 +158,63 @@ void RenderText(unsigned int shader, char *text, float x, float y, float scale, 
     return;
 }
 
-int main() {
+unsigned int rectIndices[] = {
+    0,1,2,
+    2,1,3
+};
+ 
+struct Rectangle {
+    unsigned int VAO, VBO, EBO;
+    float verts[12];
+};
 
+void bindBuffers(unsigned int VAO, unsigned int VBO, unsigned int EBO) {
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    return;
+}
+void unbindBuffers() {
+    //glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    return;
+}
+
+
+
+void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle) {
+    float rect[] = {
+        p1[0], p1[1], 0.0f, // left bottom corner
+        p2[0], p1[1], 0.0f, // right bottom corner
+        p1[0], p2[1], 0.0f, // left top corner
+        p2[0], p2[1], 0.0f, // right top corner
+    };
+    memcpy(&rectangle->verts, &rect, sizeof(rect));
+    glGenVertexArrays(1, &rectangle->VAO);
+    glBindVertexArray(rectangle->VAO);
+
+    glGenBuffers(1, &rectangle->VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, rectangle->VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rectangle->verts, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &rectangle->EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectangle->EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_VERTEX_ARRAY, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
+    return;
+}
+
+
+int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -179,7 +234,7 @@ int main() {
     glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-    
+    // load font
     FT_Library ft;
     if (FT_Init_FreeType(&ft))
     {
@@ -187,7 +242,7 @@ int main() {
         return -1;
     }
     FT_Face face;
-    if (FT_New_Face(ft, FONTS DEFAULTFONT, 0, &face))
+    if (FT_New_Face(ft, "fonts/arial.ttf", 0, &face))
     {
         printf("ERROR::FREETYPE: Failed to load font\n");
         return -1;
@@ -197,6 +252,7 @@ int main() {
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+    // load font letters into "charset"
     for (unsigned char c = 0; c < CHARSETSIZE; c++) {
 
         if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
@@ -238,165 +294,111 @@ int main() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-    float points1[] = {
-        -0.8f, -0.8f, // point a x,y
-        0.8f, 0.8f, // point b x,y
-    };
 
-    float rect1[] = {
-        points1[0], points1[1], 0.0f, // left bottom corner
-        points1[2], points1[1], 0.0f, // right bottom corner
-        points1[0], points1[3], 0.0f, // left top corner
-        points1[2], points1[3], 0.0f, // right top corner
-    };
+    vec2 p1 = {-0.8f, -0.8f}; // point a x,y
+    vec2 p2 = {0.8f, 0.8f}; // point b x,y
+    struct Rectangle rect1;
+    makeRectangle(p1, p2, &rect1);
 
-    float points2[] = {
-        25.0f, 120.0f,
-        100.0f, 180.0f
-    };
-    float rect2[] = {
-        points2[0], points2[1], 0.0f, // left bottom corner
-        points2[2], points2[1], 0.0f, // right bottom corner
-        points2[0], points2[3], 0.0f, // left top corner
-        points2[2], points2[3], 0.0f, // right top corner
-    };
+    p1[0] = 25.0f; p1[1] = 120.0f;
+    p2[0] = 100.0f; p2[1] = 180.0f;
+    struct Rectangle rect2;
+    makeRectangle(p1, p2, &rect2);
 
-    unsigned int indices[] = {
-        0,1,2,
-        2,1,3
-    };
+        
+        /**
+         *      NORMAL
+         */
 
 
-    
-    /**
-     *      NORMAL
-     */
 
+        /**
+         *      FOR TEXT
+         */
 
-    /**
-     *  rect1
-     */
-    unsigned int normalVAO, normalVBO, normalEBO;
-    glGenVertexArrays(1, &normalVAO);
-    glGenBuffers(1, &normalVBO);
-    glGenBuffers(1, &normalEBO);
-
-    glBindVertexArray(normalVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rect1), rect1, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, normalEBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-    glEnableVertexAttribArray(0);
-
-
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-
-    /**
-     *      FOR TEXT
-     */
-
-    // GENERATE VAO
-    glGenVertexArrays(1, &textVAO);
-    // GENERATE VBO
-    glGenBuffers(1, &textVBO);
-    // BIND VAO
-    glBindVertexArray(textVAO);
-    // BIND VBO
-    glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-    // ALLOCATE MEMORY FOR TEXT TRIANGLES
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    // ???
-    glEnableVertexAttribArray(0);
-    // SPECIFY HOW TO INTERPRET THE VERTEX BUFFER DATA. THIS IS STORED IN CURRENTLY BOUND VAO!
-    // index, size, type, normalized, stride, offset
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // UNBIND VAO
-    glBindVertexArray(0);
-
-
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-
-    // LOAD TEXTSHADERS
-    unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
-    mat4 projection;
-    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-    // FEED SHADER THIS PROJECTION MATRIX
-    glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-
-    unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
-    unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
-
-	// wireframe
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    char width[32];
-    char height[32];
-    char mousex[32];
-    char mousey[32];
-    double mousexpos, mouseypos;
-
-    while(!glfwWindowShouldClose(window)) {
-        static double deltaTime;
-        double time = glfwGetTime();
-        processInput(window);
-        glfwGetCursorPos(window, &mousexpos, &mouseypos);
-
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // USE RELATIVE SHADER AND SET ITS VALUES
-        glUseProgram(relativeShader);
-        glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
-        glBindVertexArray(normalVAO);
-
-        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(rect1), rect1, GL_STATIC_DRAW);
-        // DRAW BIG RECTANGLE
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        // LOAD RECT2
-        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(rect2), rect2, GL_STATIC_DRAW);
-
-        // USE ABSOLUTE SHADER AND SET ITS VALUES
-        glUseProgram(absoluteShader);
-        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 8.0f);
-        glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-        //glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "transform"), 1, GL_FALSE, &transform[0][0]);
-        // DRAW RECT2
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // GENERATE VAO
+        glGenVertexArrays(1, &textVAO);
+        // GENERATE VBO
+        glGenBuffers(1, &textVBO);
+        // BIND VAO
+        glBindVertexArray(textVAO);
+        // BIND VBO
+        glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+        // ALLOCATE MEMORY FOR TEXT TRIANGLES
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+        // ???
+        glEnableVertexAttribArray(0);
+        // SPECIFY HOW TO INTERPRET THE VERTEX BUFFER DATA. THIS IS STORED IN CURRENTLY BOUND VAO!
+        // index, size, type, normalized, stride, offset
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // UNBIND VAO
         glBindVertexArray(0);
 
-        glUseProgram(textShader);
+
+        glEnable(GL_CULL_FACE);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
+        // LOAD TEXTSHADERS
+        unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
+        mat4 projection;
         glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
         // FEED SHADER THIS PROJECTION MATRIX
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-        vec3 color = {1.0f, 1.0f, 1.0f};
-        sprintf(width, "Window x: %d", WINDOWWIDTH);
-        sprintf(height, "Window y: %d", WINDOWHEIGHT);
-        RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
-        RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
+        unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
+        unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
 
-        sprintf(mousex, "mousex: %d", (int)mousexpos);
-        sprintf(mousey, "mousey: %d", (int)mouseypos);
-        RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
-        RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
+        // wireframe
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        char width[32];
+        char height[32];
+        char mousex[32];
+        char mousey[32];
+        double mousexpos, mouseypos;
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-        deltaTime = glfwGetTime() - time;
+        while(!glfwWindowShouldClose(window)) {
+            static double deltaTime;
+            double time = glfwGetTime();
+            processInput(window);
+            glfwGetCursorPos(window, &mousexpos, &mouseypos);
+
+            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            glUseProgram(relativeShader);
+            glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
+            bindBuffers(rect1.VAO, rect1.VBO, rect1.EBO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+            glUseProgram(absoluteShader);
+            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
+            glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+            bindBuffers(rect2.VAO, rect2.VBO, rect2.EBO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+            glUseProgram(textShader);
+            glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
+            // FEED SHADER THIS PROJECTION MATRIX
+            glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+
+            vec3 color = {1.0f, 1.0f, 1.0f};
+            sprintf(width, "Window x: %d", WINDOWWIDTH);
+            sprintf(height, "Window y: %d", WINDOWHEIGHT);
+            RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
+            RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
+
+            sprintf(mousex, "mousex: %d", (int)mousexpos);
+            sprintf(mousey, "mousey: %d", (int)mouseypos);
+            RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
+            RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
+
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+            deltaTime = glfwGetTime() - time;
+        }
+        glfwTerminate();
+        return 0;
     }
-    glfwTerminate();
-    return 0;
-}
 
