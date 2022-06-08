@@ -168,14 +168,14 @@ struct Rectangle {
     float verts[12];
 };
 
-void bindBuffers(unsigned int VAO, unsigned int VBO, unsigned int EBO) {
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+void bindBuffers(struct Rectangle *rect) {
+    glBindVertexArray(rect->VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, rect->VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rect->EBO);
     return;
 }
 void unbindBuffers() {
-    //glBindVertexArray(0);
+    glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     return;
@@ -299,18 +299,10 @@ int main() {
     vec2 p2 = {0.8f, 0.8f}; // point b x,y
     struct Rectangle rect1;
     makeRectangle(p1, p2, &rect1);
-
     p1[0] = 25.0f; p1[1] = 120.0f;
     p2[0] = 100.0f; p2[1] = 180.0f;
     struct Rectangle rect2;
     makeRectangle(p1, p2, &rect2);
-
-        
-        /**
-         *      NORMAL
-         */
-
-
 
         /**
          *      FOR TEXT
@@ -363,24 +355,29 @@ int main() {
             double time = glfwGetTime();
             processInput(window);
             glfwGetCursorPos(window, &mousexpos, &mouseypos);
+            // calculate projection
+            glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
 
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+
             glUseProgram(relativeShader);
             glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
-            bindBuffers(rect1.VAO, rect1.VBO, rect1.EBO);
+            bindBuffers(&rect1);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 
             glUseProgram(absoluteShader);
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
             glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-            bindBuffers(rect2.VAO, rect2.VBO, rect2.EBO);
+            glUniform2f(glGetUniformLocation(absoluteShader, "transform"), time, 0.0f);
+            bindBuffers(&rect2);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+
+
             glUseProgram(textShader);
-            glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-            // FEED SHADER THIS PROJECTION MATRIX
             glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
             vec3 color = {1.0f, 1.0f, 1.0f};
