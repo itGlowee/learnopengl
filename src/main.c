@@ -365,13 +365,8 @@ int main() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 
-    // LOAD TEXTSHADERS
-    unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
     mat4 projection;
-    glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
-    // FEED SHADER THIS PROJECTION MATRIX
-    glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-
+    unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
     unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
     unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
 
@@ -413,41 +408,34 @@ int main() {
 
         glUseProgram(relativeShader);
         glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
-        bindBuffers(&backgroundrect);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        drawRectangle(&backgroundrect);
 
         glUseProgram(absoluteShader);
         glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), movement[0], movement[1]);
 
-        bindBuffers(&rect2);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
+        drawRectangle(&rect2);
 
-        bindBuffers(&clickRect);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mousexpos, WINDOWHEIGHT - mouseypos);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        drawRectangle(&clickRect);
 
 
-        bindBuffers(&rect3);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        drawRectangle(&rect3);
 
-        bindBuffers(&button1);
         if (inRect(button1, (int)mousexpos, (int)(WINDOWHEIGHT - mouseypos))) {
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 1.0f, 1.0f);
         }
         else {
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 0.0f, 0.2f, 1.0f);
         }
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        drawRectangle(&button1);
 
-
-        
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
+        
         vec3 color = {1.0f, 1.0f, 1.0f};
         sprintf(width, "Window x: %d", WINDOWWIDTH);
         sprintf(height, "Window y: %d", WINDOWHEIGHT);

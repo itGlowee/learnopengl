@@ -5,8 +5,7 @@
 CC=gcc
 INCDIRS=-Iinclude
 CODEDIRS=src include/glad
-DEPFLAGS=-MP -MD
-CFLAGS=-Wall -Wextra -g  $(DEPFLAGS)
+CFLAGS=-Wall -Wextra -g -MP -MD
 LIBRARIES=-Linclude -lGL -lglfw3 -lX11 -lm -lfreetype -ldl -lpthread
 
 CFILES=$(foreach D,$(CODEDIRS),$(wildcard $(D)/*.c))
@@ -32,7 +31,7 @@ all: $(BINARY)
 
 ifeq ($(OS), Windows_NT)
 clean::
-	DEL $(subst /,\,$(BINARY) $(OBJECTS))
+	DEL $(subst /,\,$(BINARY) $(OBJECTS) $(DEPFILES))
 run: $(BINARY)
 	$(subst /,\,$(BINARY))
 $(BINARY): $(OBJECTS)
@@ -40,7 +39,7 @@ $(BINARY): $(OBJECTS)
 	$(CC) -o $(BINARY) $(OBJECTS) $(LIBRARIES)
 else
 clean::
-	rm -rf $(BINARY) $(OBJECTS)
+	rm -rf $(BINARY) $(OBJECTS) $(DEPFILES)
 run: $(BINARY)
 	$(BINARY)
 $(BINARY): $(OBJECTS)

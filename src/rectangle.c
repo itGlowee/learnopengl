@@ -39,9 +39,15 @@ void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle) {
     return;
 }
 
-void bindBuffers(struct Rectangle *rect) {
+static void bindRectBuffers(struct Rectangle *rect) {
     glBindVertexArray(rect->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, rect->VBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rect->EBO);
+    return;
+}
+
+void drawRectangle(struct Rectangle *rect) {
+    bindRectBuffers(rect);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     return;
 }
