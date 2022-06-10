@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <math.h>
-unsigned short WINDOWWIDTH  = 300;
-unsigned short WINDOWHEIGHT = 200;
+unsigned short WINDOWWIDTH  = 400;
+unsigned short WINDOWHEIGHT = 300;
 #define CHARSETSIZE 128
 
 
@@ -164,6 +164,7 @@ unsigned int Shader (const char *vertexPath, const char *fragmentPath) {
 }
 
 
+
 unsigned int textVAO, textVBO;
 
 struct Character {
@@ -270,6 +271,10 @@ void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle) {
 }
 
 
+int inRect(struct Rectangle rect, int x, int y) {
+    return rect.verts[0] <= x && rect.verts[3] >= x && rect.verts[1] <= y && rect.verts[7] >= y;
+}
+
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -353,8 +358,8 @@ int main() {
 
     vec2 p1 = {-0.8f, -0.8f}; // point a x,y
     vec2 p2 = {0.8f, 0.8f}; // point b x,y
-    struct Rectangle rect1;
-    makeRectangle(p1, p2, &rect1);
+    struct Rectangle backgroundrect;
+    makeRectangle(p1, p2, &backgroundrect);
     p1[0] = 25.0f; p1[1] = 120.0f;
     p2[0] = 100.0f; p2[1] = 180.0f;
     struct Rectangle rect2;
@@ -372,6 +377,11 @@ int main() {
     p2[0] = size;
     p2[1] = size;
     makeRectangle(p1, p2, &clickRect);
+
+    struct Rectangle button1;
+    p1[0] = 300; p1[1] = 200;
+    p2[0] = 340; p2[1] = 220;
+    makeRectangle(p1, p2, &button1);
 
 
     /**
@@ -448,32 +458,40 @@ int main() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glUseProgram(relativeShader);
+        glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
+        bindBuffers(&backgroundrect);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         glUseProgram(absoluteShader);
         glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), movement[0], movement[1]);
+
         bindBuffers(&rect2);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+        
 
         bindBuffers(&clickRect);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mousexpos, WINDOWHEIGHT - mouseypos);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
-
         bindBuffers(&rect3);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        
-/*
-        glUseProgram(relativeShader);
-        glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
-        bindBuffers(&rect1);
+        bindBuffers(&button1);
+        if (inRect(button1, (int)mousexpos, (int)(WINDOWHEIGHT - mouseypos))) {
+            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 1.0f, 1.0f);
+        }
+        else {
+            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 0.0f, 0.2f, 1.0f);
+        }
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-*/
 
+
+        
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
@@ -484,10 +502,10 @@ int main() {
         RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
 
         sprintf(mousex, "mousex: %d", (int)mousexpos);
-        sprintf(mousey, "mousey: %d", (int)mouseypos);
+        sprintf(mousey, "mousey: %d", (int)(WINDOWHEIGHT - mouseypos));
         RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
         RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
-
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
         deltaTime = glfwGetTime() - time;
