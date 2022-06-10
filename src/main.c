@@ -358,6 +358,48 @@ int main() {
     p2[0] = 340; p2[1] = 220;
     makeRectangle(p1, p2, &button1);
 
+    struct Rectangle circle1;
+    p1[0] = 200; p1[1] = 100;
+    p2[0] = 300; p2[1] = 300;
+
+    unsigned int indices[] = {
+    0,1,2,
+    2,1,3
+    };
+
+    float circleverts[] = {
+        p1[0], p1[1], 0.0f, 0.0f, 0.0f,  // left bottom corner
+        p2[0], p1[1], 0.0f, 1.0f, 0.0f,  // right bottom corner
+        p1[0], p2[1], 0.0f, 0.0f, 1.0f,  // left top corner
+        p2[0], p2[1], 0.0f, 1.0f, 1.0f   // right top corner
+    };
+    float tx[] = {
+        0.0f, 0.0f, 
+        1.0f, 0.0f, 
+        0.0f, 1.0f, 
+        1.0f, 1.0f  
+    };
+    memcpy(&circle1.verts, &circleverts, sizeof(circleverts));
+    glGenVertexArrays(1, &circle1.VAO);
+    glBindVertexArray(circle1.VAO);
+
+    glGenBuffers(1, &circle1.VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, circle1.VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(circleverts), circle1.verts, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &circle1.EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_VERTEX_ARRAY, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
 
     /**
      *      FOR TEXT
@@ -391,6 +433,7 @@ int main() {
     unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
     unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
     unsigned int absoluteShader = Shader("shaders/absolute.vs", "shaders/absolute.fs");
+    unsigned int circleShader = Shader("shaders/circle.vs", "shaders/circle.fs");
 
     // wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -454,6 +497,19 @@ int main() {
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 0.0f, 0.2f, 1.0f);
         }
         drawRectangle(&button1);
+
+        glUseProgram(circleShader);
+        glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glBindVertexArray(circle1.VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, circle1.VBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
