@@ -41,60 +41,68 @@ struct Keys {
     unsigned int escape      :   1;
 } keyboard;
 struct Mouse {
+    double x, y;
     unsigned int left       : 1;
     unsigned int right      : 1;
 } mouse;
 
-void processInput(GLFWwindow *window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    mouse.x = xpos;
+    mouse.y = ypos;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, 1);
         keyboard.escape = 1;
     }
-    else {
+    else if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
         keyboard.escape = 0;
     }
-    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+    if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
         keyboard.left_arrow = 1;
     }
-    else {
+    else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
         keyboard.left_arrow = 0;
     }
-    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+    if(key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
         keyboard.right_arrow = 1;
     }
-    else {
+    else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
         keyboard.right_arrow = 0;
     }
-    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    if(key == GLFW_KEY_UP && action == GLFW_PRESS) {
         keyboard.up_arrow = 1;
     }
-    else {
+    else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
         keyboard.up_arrow = 0;
     }
-    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    if(key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
         keyboard.down_arrow = 1;
     }
-    else {
+    else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
         keyboard.down_arrow = 0;
     }
-    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-    }
-    else {
-        keyboard.right_arrow = 0;
-    }
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         mouse.left = 1;
     }
-    else {
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         mouse.left = 0;
     }
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
         mouse.right = 1;
     }
-    else {
+    else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
         mouse.right = 0;
     }
 }
+
 unsigned int Shader (const char *vertexPath, const char *fragmentPath) {
 
 	FILE *vertexFile = fopen(vertexPath, "r");
@@ -247,6 +255,9 @@ int main() {
     }
     glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     // load font
     FT_Library ft;
@@ -372,21 +383,22 @@ int main() {
 
     // wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     char width[32];
     char height[32];
     char mousex[32];
     char mousey[32];
-    double mousexpos, mouseypos;
 
     while(!glfwWindowShouldClose(window)) {
         static double deltaTime;
         static unsigned short int c;
         static vec2 movement;
         double time = glfwGetTime();
-        if ((c++ % 10) == 0){
+        if ((c++ % 128) == 0){
             printf("Time: %4.1lf\n", time);
         }
-        processInput(window);
         if (keyboard.left_arrow) {
             movement[0] -= 10.0f;
         }
@@ -399,7 +411,7 @@ int main() {
         if (keyboard.down_arrow) {
             movement[1] -= 10.0f;
         }
-        glfwGetCursorPos(window, &mousexpos, &mouseypos);
+        glfwGetCursorPos(window, &mouse.x, &mouse.y);
         // calculate projection
         glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
 
@@ -417,14 +429,15 @@ int main() {
 
         drawRectangle(&rect2);
 
-        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mousexpos, WINDOWHEIGHT - mouseypos);
+        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 1.0f, 1.0f, 1.0f);
+        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mouse.x, WINDOWHEIGHT - mouse.y);
         drawRectangle(&clickRect);
 
 
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
         drawRectangle(&rect3);
 
-        if (inRect(button1, (int)mousexpos, (int)(WINDOWHEIGHT - mouseypos))) {
+        if (inRect(button1, (int)mouse.x, (int)(WINDOWHEIGHT - mouse.y)) && mouse.left) {
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 1.0f, 1.0f);
         }
         else {
@@ -442,8 +455,8 @@ int main() {
         RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
         RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
 
-        sprintf(mousex, "mousex: %d", (int)mousexpos);
-        sprintf(mousey, "mousey: %d", (int)(WINDOWHEIGHT - mouseypos));
+        sprintf(mousex, "mousex: %d", (int)mouse.x);
+        sprintf(mousey, "mousey: %d", (int)(WINDOWHEIGHT - mouse.y));
         RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
         RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
         
