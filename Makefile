@@ -1,10 +1,17 @@
+# Made with the help of this example
+# https://github.com/gwu-cs-os/evening_os_hour/blob/master/f19/10.2-makefiles/03_featureful_makefile/Makefile
+
+
 CC=gcc
 INCDIRS=-Iinclude
-CFLAGS=-Wall -Wextra -g 
+CODEDIRS=src include/glad
+DEPFLAGS=-MP -MD
+CFLAGS=-Wall -Wextra -g  $(DEPFLAGS)
 LIBRARIES=-Linclude -lGL -lglfw3 -lX11 -lm -lfreetype -ldl -lpthread
 
-CFILES=src/main.c include/glad/glad.c
-OBJECTS=src/main.o include/glad/glad.o
+CFILES=$(foreach D,$(CODEDIRS),$(wildcard $(D)/*.c))
+OBJECTS=$(patsubst %.c,%.o,$(CFILES))
+DEPFILES=$(patsubst %.c,%.d,$(CFILES))
 
 BINARY=build/main
 
@@ -21,7 +28,7 @@ endif
 all: $(BINARY)
 
 %.o:%.c
-	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $^
+	$(CC) $(CFLAGS) $(INCDIRS) -c -o $@ $<
 
 ifeq ($(OS), Windows_NT)
 clean::
@@ -43,3 +50,7 @@ endif
 
 fast::
 	$(CC) -O3 -o $(BINARY) $(INCDIRS) $(CFILES) $(LIBRARIES)
+
+
+# include the dependencies
+-include $(DEPFILES)
