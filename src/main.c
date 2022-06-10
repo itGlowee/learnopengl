@@ -1,3 +1,17 @@
+
+/**
+ * TODO: Make a texture shader
+ * TODO: Render a circle
+ * TODO: Render a line
+ * TODO: Figure out what's the best way to encapsulate shape rendering
+ * TODO: Encapsulate Text stuff
+ * TODO: Encapsulate shader stuff
+ * TODO: Make more interactive stuff
+ * TODO: Make cool shaders.
+ * TODO: Maybe try 2.5d stuff
+ */
+
+
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <cglm/cglm.h>
@@ -46,14 +60,12 @@ struct Mouse {
     unsigned int right      : 1;
 } mouse;
 
-static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-{
+static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos) {
     mouse.x = xpos;
     mouse.y = ypos;
 }
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, 1);
         keyboard.escape = 1;
@@ -87,18 +99,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-{
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         mouse.left = 1;
     }
-    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
         mouse.left = 0;
     }
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
         mouse.right = 1;
     }
-    else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+    else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
         mouse.right = 0;
     }
 }
@@ -384,8 +395,8 @@ int main() {
     // wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     char width[32];
     char height[32];
     char mousex[32];
@@ -411,7 +422,6 @@ int main() {
         if (keyboard.down_arrow) {
             movement[1] -= 10.0f;
         }
-        glfwGetCursorPos(window, &mouse.x, &mouse.y);
         // calculate projection
         glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
 
