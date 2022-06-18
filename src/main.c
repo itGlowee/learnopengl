@@ -199,7 +199,7 @@ struct Character {
     unsigned int Advance;
 } charset[CHARSETSIZE];
 
-void RenderText(unsigned int shader, char *text, float x, float y, float scale, vec3 color) {
+void RenderText(unsigned int shader, char *text, float x, float y, float scale, const vec3 color) {
 	glUseProgram(shader);
     glUniform3f(glGetUniformLocation(shader, "textColor"), color[0], color[1], color[2]);
     glActiveTexture(GL_TEXTURE0);
@@ -334,29 +334,9 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, 0);
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
-
-    struct Rectangle frameRect;
-    makeRectangle(2.0f, 2.0f, &frameRect);
-
-    struct Rectangle backgroundRect;
-    makeRectangle(1.9f, 1.9f, &backgroundRect);
-
-    struct Rectangle rect2;
-    makeRectangle(75.0f, 60.0f, &rect2);
-
-    struct Rectangle mouseRect;
-    makeRectangle(10.0f, 10.0f, &mouseRect);
-
-    struct Rectangle button1;
-    makeRectangle(40.0f, 20.0f, &button1);
-
-    struct Rectangle circle1;
-    makeRectangle(100.0f, 100.0f, &circle1);
-
     /**
      *      FOR TEXT
      */
-
     // GENERATE VAO
     glGenVertexArrays(1, &textVAO);
     // GENERATE VBO
@@ -401,6 +381,24 @@ int main() {
     const unsigned int FPSsamplesize = 10;
     double previous[FPSsamplesize];
 
+    struct Rectangle frameRect;
+    makeRectangle(2.0f, 2.0f, &frameRect);
+
+    struct Rectangle backgroundRect;
+    makeRectangle(1.9f, 1.9f, &backgroundRect);
+
+    struct Rectangle rect2;
+    makeRectangle(75.0f, 60.0f, &rect2);
+
+    struct Rectangle mouseRect;
+    makeRectangle(10.0f, 10.0f, &mouseRect);
+
+    struct Rectangle button1;
+    makeRectangle(40.0f, 20.0f, &button1);
+
+    struct Rectangle circle1;
+    makeRectangle(100.0f, 100.0f, &circle1);
+
     while(!glfwWindowShouldClose(window)) {
         static double deltaTime;
         static double average;
@@ -409,7 +407,7 @@ int main() {
         double time = glfwGetTime();
         previous[c % FPSsamplesize] = deltaTime;
         average = 0;
-        for (int i = 0; i < FPSsamplesize; i++) {
+        for (unsigned int i = 0; i < FPSsamplesize; i++) {
             average += previous[i];
         }
         average /= FPSsamplesize;
@@ -449,7 +447,7 @@ int main() {
             border,                 WINDOWHEIGHT - border,  0.0f,   0.0f,   1.0f,    // left top corner
             WINDOWWIDTH - border,   WINDOWHEIGHT - border,  0.0f,   1.0f,   1.0f     // right top corner
         };
-        updateVerticies(&backgroundRect, &rect);
+        updateVerticies(&backgroundRect, (const float*)&rect);
 
         drawRectangle(&backgroundRect, absoluteShader, 0, 0, BACKGROUND, 1.0f);
         drawRectangle(&rect2, absoluteShader, movement[0], movement[1], WHITE, 1.0f);

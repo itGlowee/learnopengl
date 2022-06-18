@@ -10,9 +10,9 @@ struct Rectangle {
     unsigned int VAO, VBO, EBO;
 };
 
-void makeRectangle(float width, float height, struct Rectangle *rectangle);
-int inRect(struct Rectangle rect, int x, int y);
-void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, vec3 color, float a);
-void updateVerticies(struct Rectangle *rect, float *values);
+void makeRectangle(const float width, const float height, struct Rectangle *rectangle);
+int inRect(struct Rectangle rect, const int x, const int y);
+void drawRectangle(struct Rectangle *rect, const unsigned int shader, const float x, const float y, const vec3 color, const float a);
+void updateVerticies(struct Rectangle *rect, const float *values);
 
 #endif

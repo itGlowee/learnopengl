@@ -5,7 +5,7 @@ static unsigned int rectIndices[] = {
     2,1,3
 };
  
-int inRect(struct Rectangle rect, int x, int y) {
+int inRect(struct Rectangle rect, const int x, const int y) {
     return rect.verts[0] + rect.transform[0] <= x && rect.verts[5] + rect.transform[0]>= x && rect.verts[1] + rect.transform[1] <= y && rect.verts[11] + rect.transform[1] >= y;
 }
 
@@ -17,7 +17,7 @@ static void bindRectBuffers(struct Rectangle *rect) {
 }
 
 
-void updateVerticies(struct Rectangle *rect, float *values) {
+void updateVerticies(struct Rectangle *rect, const float *values) {
     float verticies[20];
     memcpy(verticies, values, sizeof(verticies));
     memcpy(&rect->verts, &verticies, sizeof(verticies));
@@ -60,7 +60,7 @@ void makeRectangle(float width, float height, struct Rectangle *rectangle) {
 
     return;
 }
-void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, vec3 color, float a) {
+void drawRectangle(struct Rectangle *rect, const unsigned int shader, const float x, const float y, const vec3 color, const float a) {
     bindRectBuffers(rect);
     glUseProgram(shader);
     glUniform4f(glGetUniformLocation(shader, "col"), color[0], color[1], color[2], a);
