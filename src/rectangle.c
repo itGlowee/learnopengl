@@ -9,6 +9,25 @@ int inRect(struct Rectangle rect, int x, int y) {
     return rect.verts[0] + rect.transform[0] <= x && rect.verts[5] + rect.transform[0]>= x && rect.verts[1] + rect.transform[1] <= y && rect.verts[11] + rect.transform[1] >= y;
 }
 
+static void bindRectBuffers(struct Rectangle *rect) {
+    glBindVertexArray(rect->VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, rect->VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rect->EBO);
+    return;
+}
+
+
+void updateVerticies(struct Rectangle *rect, float *values) {
+    float verticies[20];
+    memcpy(verticies, values, sizeof(verticies));
+    memcpy(&rect->verts, &verticies, sizeof(verticies));
+    bindRectBuffers(rect);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticies), verticies);
+    glBindBuffer(GL_VERTEX_ARRAY, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
 void makeRectangle(float width, float height, struct Rectangle *rectangle) {
     width *= 0.5;
     height *= 0.5;
@@ -32,7 +51,8 @@ void makeRectangle(float width, float height, struct Rectangle *rectangle) {
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)0);
     glEnableVertexAttribArray(0);
-
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
     glBindBuffer(GL_VERTEX_ARRAY, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -40,14 +60,6 @@ void makeRectangle(float width, float height, struct Rectangle *rectangle) {
 
     return;
 }
-
-static void bindRectBuffers(struct Rectangle *rect) {
-    glBindVertexArray(rect->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, rect->VBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rect->EBO);
-    return;
-}
-
 void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, float r, float g, float b, float a) {
     bindRectBuffers(rect);
     glUseProgram(shader);

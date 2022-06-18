@@ -1,7 +1,6 @@
 
 /**
  * TODO: Make a texture shader
- * TODO: Render a circle
  * TODO: Render a line
  * TODO: Figure out what's the best way to encapsulate shape rendering
  * TODO: Encapsulate Text stuff
@@ -9,6 +8,8 @@
  * TODO: Make more interactive stuff
  * TODO: Make cool shaders.
  * TODO: Maybe try 2.5d stuff
+ * TODO: Actually compile the libraries so I don't look dumb
+ * DONE: Render a circle
  */
 
 
@@ -330,13 +331,11 @@ int main() {
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 
-
     struct Rectangle frameRect;
     makeRectangle(2.0f, 2.0f, &frameRect);
 
     struct Rectangle backgroundRect;
     makeRectangle(1.9f, 1.9f, &backgroundRect);
-
 
     struct Rectangle rect2;
     makeRectangle(75.0f, 60.0f, &rect2);
@@ -351,46 +350,18 @@ int main() {
     makeRectangle(40.0f, 20.0f, &button1);
 
     struct Rectangle circle1;
-    vec2 p1, p2;
-    float size = 100.0f;
-    p1[0] = -size;
-    p1[1] = -size;
-    p2[0] = size;
-    p2[1] = size;
-
-    unsigned int indices[] = {
-    0,1,2,
-    2,1,3
-    };
+    float circlewidth = 100.0f;
+    float circleheight = 100.0f;
+    makeRectangle(100.0f, 100.0f, &circle1);
 
     float circleverts[] = {
-        p1[0], p1[1], 0.0f, -1.0f, -1.0f,  // left bottom corner
-        p2[0], p1[1], 0.0f, 1.0f, -1.0f,  // right bottom corner
-        p1[0], p2[1], 0.0f, -1.0f, 1.0f,  // left top corner
-        p2[0], p2[1], 0.0f, 1.0f, 1.0f   // right top corner
+        -circlewidth, -circleheight, 0.0f, -1.0f, -1.0f,   // left bottom corner
+        circlewidth, -circleheight, 0.0f, 1.0f, -1.0f,    // right bottom corner
+        -circlewidth, circleheight, 0.0f, -1.0f, 1.0f,    // left top corner
+        circlewidth, circleheight, 0.0f, 1.0f, 1.0f      // right top corner
     };
+    updateVerticies(&circle1, &circleverts);
 
-    memcpy(&circle1.verts, &circleverts, sizeof(circleverts));
-    glGenVertexArrays(1, &circle1.VAO);
-    glBindVertexArray(circle1.VAO);
-
-    glGenBuffers(1, &circle1.VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, circle1.VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(circleverts), circle1.verts, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &circle1.EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_VERTEX_ARRAY, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
     /**
      *      FOR TEXT
      */
@@ -482,6 +453,9 @@ int main() {
 
         glUseProgram(circleShader);
         glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+        drawRectangle(&circle1, circleShader, 300.0f, 300.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+        /*  
+        glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
         glUniform2f(glGetUniformLocation(circleShader, "transform"), 0.0f, 0.0f);
         glUniform4f(glGetUniformLocation(circleShader, "col"), 0.0f, 1.0f, 0.0f, 1.0f);
         glBindVertexArray(circle1.VAO);
@@ -489,7 +463,7 @@ int main() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
+        */
 
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
