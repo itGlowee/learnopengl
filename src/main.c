@@ -9,7 +9,7 @@
  * TODO: Make cool shaders.
  * TODO: Maybe try 2.5d stuff
  * TODO: Actually compile the libraries so I don't look dumb
- * TODO: FPS counter
+ * DONE: FPS counter
  * DONE: Render a circle
  */
 
@@ -397,12 +397,22 @@ int main() {
     char height[32];
     char mousex[32];
     char mousey[32];
+    char FPS[32];
+    const unsigned int FPSsamplesize = 10;
+    double previous[FPSsamplesize];
 
     while(!glfwWindowShouldClose(window)) {
         static double deltaTime;
+        static double average;
         static unsigned short int c;
         static vec2 movement = { -50.0f, -50.0f };
         double time = glfwGetTime();
+        previous[c % FPSsamplesize] = deltaTime;
+        average = 0;
+        for (int i = 0; i < FPSsamplesize; i++) {
+            average += previous[i];
+        }
+        average /= FPSsamplesize;
         if ((c++ % 128) == 0){
             printf("Time: %4.1lf\n", time);
         }
@@ -469,6 +479,8 @@ int main() {
         RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, WHITE);
         RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, WHITE);
         
+        sprintf(FPS, "FPS: %d", (int) (1.0f / average));
+        RenderText(textShader, FPS, 20.0f, 125.0f, 0.5f, WHITE);
         glfwSwapBuffers(window);
         glfwPollEvents();
         deltaTime = glfwGetTime() - time;
