@@ -26,7 +26,7 @@
 #include "rectangle.h"
 
 unsigned short WINDOWWIDTH  = 400;
-unsigned short WINDOWHEIGHT = 300;
+unsigned short WINDOWHEIGHT = 600;
 #define CHARSETSIZE 128
 
 
@@ -335,50 +335,54 @@ int main() {
     vec2 p2 = {0.8f, 0.8f}; // point b x,y
     struct Rectangle backgroundrect;
     makeRectangle(p1, p2, &backgroundrect);
+
+
+    struct Rectangle rect2;
     p1[0] = 25.0f; p1[1] = 120.0f;
     p2[0] = 100.0f; p2[1] = 180.0f;
-    struct Rectangle rect2;
     makeRectangle(p1, p2, &rect2);
 
+    struct Rectangle rect3;
     p1[0] = 100.0f; p1[1] = 200.0f;
     p2[0] = 200.0f; p2[1] = 400.0f;
-    struct Rectangle rect3;
     makeRectangle(p1, p2, &rect3);
 
-    struct Rectangle clickRect;
-    int size = 10;
+    struct Rectangle mouseRect;
+    float size = 10.0f;
     p1[0] = -size;
     p1[1] = -size;
     p2[0] = size;
     p2[1] = size;
-    makeRectangle(p1, p2, &clickRect);
+    makeRectangle(p1, p2, &mouseRect);
 
     struct Rectangle button1;
-    p1[0] = 300; p1[1] = 200;
-    p2[0] = 340; p2[1] = 220;
+    p1[0] = 300.0f; p1[1] = 200.0f;
+    p2[0] = 340.0f; p2[1] = 220.0f;
     makeRectangle(p1, p2, &button1);
 
     struct Rectangle circle1;
-    p1[0] = 200; p1[1] = 100;
-    p2[0] = 300; p2[1] = 300;
-
+    //p1[0] = 0.2f; p1[1] = 0.2f;
+    //p2[0] = 0.8f; p2[1] = 0.8f;
+    p1[0] = 100; p1[1] = 300;
+    p2[0] = 500; p2[1] = 500;
     unsigned int indices[] = {
     0,1,2,
     2,1,3
     };
 
+    //float circleverts[] = {
+    //    p1[0], p1[1], 0.0f, 0.0f, 0.0f,  // left bottom corner
+    //    p2[0], p1[1], 0.0f, 1.0f, 0.0f,  // right bottom corner
+    //    p1[0], p2[1], 0.0f, 0.0f, 1.0f,  // left top corner
+    //    p2[0], p2[1], 0.0f, 1.0f, 1.0f   // right top corner
+    //};
     float circleverts[] = {
-        p1[0], p1[1], 0.0f, 0.0f, 0.0f,  // left bottom corner
-        p2[0], p1[1], 0.0f, 1.0f, 0.0f,  // right bottom corner
-        p1[0], p2[1], 0.0f, 0.0f, 1.0f,  // left top corner
+        p1[0], p1[1], 0.0f, -1.0f, -1.0f,  // left bottom corner
+        p2[0], p1[1], 0.0f, 1.0f, -1.0f,  // right bottom corner
+        p1[0], p2[1], 0.0f, -1.0f, 1.0f,  // left top corner
         p2[0], p2[1], 0.0f, 1.0f, 1.0f   // right top corner
     };
-    float tx[] = {
-        0.0f, 0.0f, 
-        1.0f, 0.0f, 
-        0.0f, 1.0f, 
-        1.0f, 1.0f  
-    };
+
     memcpy(&circle1.verts, &circleverts, sizeof(circleverts));
     glGenVertexArrays(1, &circle1.VAO);
     glBindVertexArray(circle1.VAO);
@@ -391,16 +395,15 @@ int main() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_VERTEX_ARRAY, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
-
     /**
      *      FOR TEXT
      */
@@ -428,7 +431,9 @@ int main() {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
-
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);  
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     mat4 projection;
     unsigned int textShader = Shader("shaders/glyphs.vs", "shaders/glyphs.fs");
     unsigned int relativeShader = Shader("shaders/orange.vs", "shaders/orange.fs");
@@ -470,11 +475,11 @@ int main() {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        /*
         glUseProgram(relativeShader);
         glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
         drawRectangle(&backgroundrect);
-
+        */
         glUseProgram(absoluteShader);
         glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -482,11 +487,12 @@ int main() {
 
         drawRectangle(&rect2);
 
-        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 1.0f, 1.0f, 1.0f);
+        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 0.0f, 0.0f, 1.0f);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mouse.x, WINDOWHEIGHT - mouse.y);
-        drawRectangle(&clickRect);
+        drawRectangle(&mouseRect);
 
 
+        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.0f, 0.0f, 1.0f, 1.0f);
         glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
         drawRectangle(&rect3);
 
@@ -494,23 +500,21 @@ int main() {
             glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 1.0f, 1.0f);
         }
         else {
-            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 0.0f, 0.2f, 1.0f);
+            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 0.2f, 1.0f);
         }
+        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
         drawRectangle(&button1);
 
         glUseProgram(circleShader);
         glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glUniform2f(glGetUniformLocation(circleShader, "transform"), 0.0f, 0.0f);
+        glUniform4f(glGetUniformLocation(circleShader, "col"), 0.0f, 1.0f, 0.0f, 1.0f);
         glBindVertexArray(circle1.VAO);
         glBindBuffer(GL_ARRAY_BUFFER, circle1.VBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 

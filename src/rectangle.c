@@ -6,15 +6,15 @@ static unsigned int rectIndices[] = {
 };
  
 int inRect(struct Rectangle rect, int x, int y) {
-    return rect.verts[0] <= x && rect.verts[3] >= x && rect.verts[1] <= y && rect.verts[7] >= y;
+    return rect.verts[0] <= x && rect.verts[5] >= x && rect.verts[1] <= y && rect.verts[11] >= y;
 }
 
 void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle) {
     float rect[] = {
-        p1[0], p1[1], 0.0f, // left bottom corner
-        p2[0], p1[1], 0.0f, // right bottom corner
-        p1[0], p2[1], 0.0f, // left top corner
-        p2[0], p2[1], 0.0f, // right top corner
+        p1[0], p1[1], 0.0f, 0.0f, 0.0f,    // left bottom corner
+        p2[0], p1[1], 0.0f, 1.0f, 0.0f,    // right bottom corner
+        p1[0], p2[1], 0.0f, 0.0f, 1.0f,    // left top corner
+        p2[0], p2[1], 0.0f, 1.0f, 1.0f     // right top corner
     };
     memcpy(&rectangle->verts, &rect, sizeof(rect));
     glGenVertexArrays(1, &rectangle->VAO);
@@ -28,7 +28,7 @@ void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rectangle->EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_VERTEX_ARRAY, 0);

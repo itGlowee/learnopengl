@@ -6,7 +6,7 @@
 
 struct Rectangle {
     unsigned int VAO, VBO, EBO;
-    float verts[12];
+    float verts[20];
 };
 
 void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle);
