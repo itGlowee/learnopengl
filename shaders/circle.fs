@@ -5,8 +5,9 @@ uniform vec4 col;
 uniform float thickness = 1.0;
 
 void main() {
-    vec4 sampled = vec4(TexCoords, 0.0, 1.0);
-    float distance = 1.0 - length(TexCoords);
+    vec2 uv = TexCoords * 2.0 - 1.0;
+    vec4 sampled = vec4(uv, 0.0, 1.0);
+    float distance = 1.0 - length(uv);
     //if (distance > 0.0) {
     //    distance = 1.0;
     //}

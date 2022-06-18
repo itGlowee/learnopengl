@@ -350,17 +350,7 @@ int main() {
     makeRectangle(40.0f, 20.0f, &button1);
 
     struct Rectangle circle1;
-    float circlewidth = 100.0f;
-    float circleheight = 100.0f;
     makeRectangle(100.0f, 100.0f, &circle1);
-
-    float circleverts[] = {
-        -circlewidth, -circleheight, 0.0f, -1.0f, -1.0f,   // left bottom corner
-        circlewidth, -circleheight, 0.0f, 1.0f, -1.0f,    // right bottom corner
-        -circlewidth, circleheight, 0.0f, -1.0f, 1.0f,    // left top corner
-        circlewidth, circleheight, 0.0f, 1.0f, 1.0f      // right top corner
-    };
-    updateVerticies(&circle1, &circleverts);
 
     /**
      *      FOR TEXT
@@ -376,7 +366,6 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, textVBO);
     // ALLOCATE MEMORY FOR TEXT TRIANGLES
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    // ???
     glEnableVertexAttribArray(0);
     // SPECIFY HOW TO INTERPRET THE VERTEX BUFFER DATA. THIS IS STORED IN CURRENTLY BOUND VAO!
     // index, size, type, normalized, stride, offset
@@ -454,16 +443,7 @@ int main() {
         glUseProgram(circleShader);
         glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
         drawRectangle(&circle1, circleShader, 300.0f, 300.0f, 0.0f, 1.0f, 0.0f, 1.0f);
-        /*  
-        glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-        glUniform2f(glGetUniformLocation(circleShader, "transform"), 0.0f, 0.0f);
-        glUniform4f(glGetUniformLocation(circleShader, "col"), 0.0f, 1.0f, 0.0f, 1.0f);
-        glBindVertexArray(circle1.VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, circle1.VBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        */
 
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
