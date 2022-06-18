@@ -9,6 +9,7 @@
  * TODO: Make cool shaders.
  * TODO: Maybe try 2.5d stuff
  * TODO: Actually compile the libraries so I don't look dumb
+ * TODO: FPS counter
  * DONE: Render a circle
  */
 
@@ -25,6 +26,7 @@
 #include <math.h>
 
 #include "rectangle.h"
+#include "colors.h"
 
 unsigned short WINDOWWIDTH  = 400;
 unsigned short WINDOWHEIGHT = 600;
@@ -245,15 +247,17 @@ void unbindBuffers() {
     return;
 }
 
-
-
-
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 
+    //const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    //glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+    //WINDOWWIDTH = mode->width;
+    //WINDOWHEIGHT = mode->height;
+    //GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "LearnOpenGL", glfwGetPrimaryMonitor(), NULL);
     GLFWwindow *window = glfwCreateWindow(WINDOWWIDTH, WINDOWHEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL) {
         printf("Failed to create GLFW window :(\n");
@@ -340,9 +344,6 @@ int main() {
     struct Rectangle rect2;
     makeRectangle(75.0f, 60.0f, &rect2);
 
-    struct Rectangle rect3;
-    makeRectangle(100.0f, 200.0f, &rect3);
-
     struct Rectangle mouseRect;
     makeRectangle(10.0f, 10.0f, &mouseRect);
 
@@ -389,9 +390,9 @@ int main() {
 
     // wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     char width[32];
     char height[32];
     char mousex[32];
@@ -400,7 +401,7 @@ int main() {
     while(!glfwWindowShouldClose(window)) {
         static double deltaTime;
         static unsigned short int c;
-        static vec2 movement;
+        static vec2 movement = { -50.0f, -50.0f };
         double time = glfwGetTime();
         if ((c++ % 128) == 0){
             printf("Time: %4.1lf\n", time);
@@ -420,43 +421,53 @@ int main() {
         // calculate projection
         glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
         glUseProgram(relativeShader);
-        drawRectangle(&frameRect, relativeShader, 0, 0, fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)), 1.0f);
-        drawRectangle(&backgroundRect, relativeShader, 0, 0, 0.2f, 0.3f, 0.3f, 1.0f);
+        vec3 color = { fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)) };
+        drawRectangle(&frameRect, relativeShader, 0, 0, color, 1.0f);
         
         glUseProgram(absoluteShader);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-        drawRectangle(&rect2, absoluteShader, movement[0], movement[1], 1.0f, 1.0f, 1.0f, 1.0f);
-        drawRectangle(&mouseRect, absoluteShader, mouse.x, WINDOWHEIGHT - mouse.y, 1.0f, 0.0f, 0.0f, 1.0f);
-        drawRectangle(&rect3, absoluteShader, 100, 200, 0.0f, 0.0f, 1.0f, 1.0f);
+
+        float border = 2.0f;
+        float rect[] = {
+        //  X                       Y                       Z       U       V
+            border,                 border,                 0.0f,   0.0f,   0.0f,    // left bottom corner
+            WINDOWWIDTH - border,   border,                 0.0f,   1.0f,   0.0f,    // right bottom corner
+            border,                 WINDOWHEIGHT - border,  0.0f,   0.0f,   1.0f,    // left top corner
+            WINDOWWIDTH - border,   WINDOWHEIGHT - border,  0.0f,   1.0f,   1.0f     // right top corner
+        };
+        updateVerticies(&backgroundRect, &rect);
+
+        drawRectangle(&backgroundRect, absoluteShader, 0, 0, BACKGROUND, 1.0f);
+        drawRectangle(&rect2, absoluteShader, movement[0], movement[1], WHITE, 1.0f);
 
         if (inRect(button1, (int)mouse.x, (int)(WINDOWHEIGHT - mouse.y)) && mouse.left) {
-            drawRectangle(&button1, absoluteShader, 200.0f, 200.0f, 1.0f, 0.0f, 0.0f, 1.0f);
+            drawRectangle(&button1, absoluteShader, WINDOWWIDTH - 50.0f, WINDOWHEIGHT - 30.0f, RED, 1.0f);
         }
         else {
-            drawRectangle(&button1, absoluteShader, 200.0f, 200.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+            drawRectangle(&button1, absoluteShader, WINDOWWIDTH - 50.0f, WINDOWHEIGHT - 30.0f, BLUE, 1.0f);
         }
 
         glUseProgram(circleShader);
         glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-        drawRectangle(&circle1, circleShader, 300.0f, 300.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+        drawRectangle(&circle1, circleShader, 300.0f, fabs(sin(time * 2)) * 300.0f + 45.0f, GREEN, 1.0f);
+        drawRectangle(&mouseRect, circleShader, mouse.x, WINDOWHEIGHT - mouse.y, RED, 1.0f);
 
 
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-        vec3 color = {1.0f, 1.0f, 1.0f};
         sprintf(width, "Window x: %d", WINDOWWIDTH);
         sprintf(height, "Window y: %d", WINDOWHEIGHT);
-        RenderText(textShader, width, 20.0f, 25.0f, 0.5f, color);
-        RenderText(textShader, height, 20.0f, 50.0f, 0.5f, color);
+        RenderText(textShader, width, 20.0f, 25.0f, 0.5f, WHITE);
+        RenderText(textShader, height, 20.0f, 50.0f, 0.5f, WHITE);
 
         sprintf(mousex, "mousex: %d", (int)mouse.x);
         sprintf(mousey, "mousey: %d", (int)(WINDOWHEIGHT - mouse.y));
-        RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, color);
-        RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, color);
+        RenderText(textShader, mousex, 20.0f, 75.0f, 0.5f, WHITE);
+        RenderText(textShader, mousey, 20.0f, 100.0f, 0.5f, WHITE);
         
         glfwSwapBuffers(window);
         glfwPollEvents();

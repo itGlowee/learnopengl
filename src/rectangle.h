@@ -12,7 +12,7 @@ struct Rectangle {
 
 void makeRectangle(float width, float height, struct Rectangle *rectangle);
 int inRect(struct Rectangle rect, int x, int y);
-void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, float r, float g, float b, float a);
+void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, vec3 color, float a);
 void updateVerticies(struct Rectangle *rect, float *values);
 
 #endif

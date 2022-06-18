@@ -60,10 +60,10 @@ void makeRectangle(float width, float height, struct Rectangle *rectangle) {
 
     return;
 }
-void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, float r, float g, float b, float a) {
+void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, vec3 color, float a) {
     bindRectBuffers(rect);
     glUseProgram(shader);
-    glUniform4f(glGetUniformLocation(shader, "col"), r, g, b, a);
+    glUniform4f(glGetUniformLocation(shader, "col"), color[0], color[1], color[2], a);
     glUniform2f(glGetUniformLocation(shader, "transform"), x, y);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     rect->transform[0] = x;
