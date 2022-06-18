@@ -399,6 +399,30 @@ int main() {
     struct Rectangle circle1;
     makeRectangle(100.0f, 100.0f, &circle1);
 
+    float line[] = {
+        20.0f,                  100.0f,                 0.0f,
+        WINDOWWIDTH - 40.0f,    100.0f,                 0.0f,
+        WINDOWWIDTH - 40.0f,    WINDOWHEIGHT - 100.0f,  0.0f,
+        20.0f,                  WINDOWHEIGHT - 100.0f,  0.0f
+    };
+    glLineWidth(10.0f);
+    glEnable(GL_LINE_SMOOTH);
+    
+
+    unsigned int lineVAO, lineVBO;
+    glGenVertexArrays(1, &lineVAO);
+    glBindVertexArray(lineVAO);
+
+    glGenBuffers(1, &lineVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(line), line, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void *)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+
     while(!glfwWindowShouldClose(window)) {
         static double deltaTime;
         static double average;
@@ -435,7 +459,9 @@ int main() {
         glUseProgram(relativeShader);
         vec3 color = { fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)) };
         drawRectangle(&frameRect, relativeShader, 0, 0, color, 1.0f);
-        
+
+
+       
         glUseProgram(absoluteShader);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
 
@@ -458,6 +484,11 @@ int main() {
         else {
             drawRectangle(&button1, absoluteShader, WINDOWWIDTH - 50.0f, WINDOWHEIGHT - 30.0f, BLUE, 1.0f);
         }
+
+        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
+        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0, 0);
+        glBindVertexArray(lineVAO);
+        glDrawArrays(GL_LINE_LOOP, 0, 4);
 
         glUseProgram(circleShader);
         glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -486,4 +517,3 @@ int main() {
     glfwTerminate();
     return 0;
 }
-
