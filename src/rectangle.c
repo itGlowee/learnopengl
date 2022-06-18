@@ -6,15 +6,17 @@ static unsigned int rectIndices[] = {
 };
  
 int inRect(struct Rectangle rect, int x, int y) {
-    return rect.verts[0] <= x && rect.verts[5] >= x && rect.verts[1] <= y && rect.verts[11] >= y;
+    return rect.verts[0] + rect.transform[0] <= x && rect.verts[5] + rect.transform[0]>= x && rect.verts[1] + rect.transform[1] <= y && rect.verts[11] + rect.transform[1] >= y;
 }
 
-void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle) {
+void makeRectangle(float width, float height, struct Rectangle *rectangle) {
+    width *= 0.5;
+    height *= 0.5;
     float rect[] = {
-        p1[0], p1[1], 0.0f, 0.0f, 0.0f,    // left bottom corner
-        p2[0], p1[1], 0.0f, 1.0f, 0.0f,    // right bottom corner
-        p1[0], p2[1], 0.0f, 0.0f, 1.0f,    // left top corner
-        p2[0], p2[1], 0.0f, 1.0f, 1.0f     // right top corner
+        -width, -height, 0.0f, 0.0f, 0.0f,    // left bottom corner
+        width, -height, 0.0f, 1.0f, 0.0f,    // right bottom corner
+        -width, height, 0.0f, 0.0f, 1.0f,    // left top corner
+        width, height, 0.0f, 1.0f, 1.0f     // right top corner
     };
     memcpy(&rectangle->verts, &rect, sizeof(rect));
     glGenVertexArrays(1, &rectangle->VAO);
@@ -46,8 +48,13 @@ static void bindRectBuffers(struct Rectangle *rect) {
     return;
 }
 
-void drawRectangle(struct Rectangle *rect) {
+void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, float r, float g, float b, float a) {
     bindRectBuffers(rect);
+    glUseProgram(shader);
+    glUniform4f(glGetUniformLocation(shader, "col"), r, g, b, a);
+    glUniform2f(glGetUniformLocation(shader, "transform"), x, y);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    rect->transform[0] = x;
+    rect->transform[1] = y;
     return;
 }

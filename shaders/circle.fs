@@ -11,7 +11,7 @@ void main() {
     //    distance = 1.0;
     //}
     //float fade = 0.01;
-    float fade = 0.41;
+    float fade = 0.01;
     float alpha = smoothstep(0.0, fade, distance);
     alpha *= smoothstep(thickness + fade, thickness,distance);
     sampled = vec4(col.rgb, col.a * alpha);

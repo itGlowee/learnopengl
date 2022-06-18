@@ -331,51 +331,38 @@ int main() {
     FT_Done_FreeType(ft);
 
 
-    vec2 p1 = {-0.8f, -0.8f}; // point a x,y
-    vec2 p2 = {0.8f, 0.8f}; // point b x,y
-    struct Rectangle backgroundrect;
-    makeRectangle(p1, p2, &backgroundrect);
+    struct Rectangle frameRect;
+    makeRectangle(2.0f, 2.0f, &frameRect);
+
+    struct Rectangle backgroundRect;
+    makeRectangle(1.9f, 1.9f, &backgroundRect);
 
 
     struct Rectangle rect2;
-    p1[0] = 25.0f; p1[1] = 120.0f;
-    p2[0] = 100.0f; p2[1] = 180.0f;
-    makeRectangle(p1, p2, &rect2);
+    makeRectangle(75.0f, 60.0f, &rect2);
 
     struct Rectangle rect3;
-    p1[0] = 100.0f; p1[1] = 200.0f;
-    p2[0] = 200.0f; p2[1] = 400.0f;
-    makeRectangle(p1, p2, &rect3);
+    makeRectangle(100.0f, 200.0f, &rect3);
 
     struct Rectangle mouseRect;
-    float size = 10.0f;
+    makeRectangle(10.0f, 10.0f, &mouseRect);
+
+    struct Rectangle button1;
+    makeRectangle(40.0f, 20.0f, &button1);
+
+    struct Rectangle circle1;
+    vec2 p1, p2;
+    float size = 100.0f;
     p1[0] = -size;
     p1[1] = -size;
     p2[0] = size;
     p2[1] = size;
-    makeRectangle(p1, p2, &mouseRect);
 
-    struct Rectangle button1;
-    p1[0] = 300.0f; p1[1] = 200.0f;
-    p2[0] = 340.0f; p2[1] = 220.0f;
-    makeRectangle(p1, p2, &button1);
-
-    struct Rectangle circle1;
-    //p1[0] = 0.2f; p1[1] = 0.2f;
-    //p2[0] = 0.8f; p2[1] = 0.8f;
-    p1[0] = 100; p1[1] = 300;
-    p2[0] = 500; p2[1] = 500;
     unsigned int indices[] = {
     0,1,2,
     2,1,3
     };
 
-    //float circleverts[] = {
-    //    p1[0], p1[1], 0.0f, 0.0f, 0.0f,  // left bottom corner
-    //    p2[0], p1[1], 0.0f, 1.0f, 0.0f,  // right bottom corner
-    //    p1[0], p2[1], 0.0f, 0.0f, 1.0f,  // left top corner
-    //    p2[0], p2[1], 0.0f, 1.0f, 1.0f   // right top corner
-    //};
     float circleverts[] = {
         p1[0], p1[1], 0.0f, -1.0f, -1.0f,  // left bottom corner
         p2[0], p1[1], 0.0f, 1.0f, -1.0f,  // right bottom corner
@@ -475,35 +462,23 @@ int main() {
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        /*
+        
         glUseProgram(relativeShader);
-        glUniform3f(glGetUniformLocation(relativeShader, "col"), fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)));
-        drawRectangle(&backgroundrect);
-        */
+        drawRectangle(&frameRect, relativeShader, 0, 0, fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)), 1.0f);
+        drawRectangle(&backgroundRect, relativeShader, 0, 0, 0.2f, 0.3f, 0.3f, 1.0f);
+        
         glUseProgram(absoluteShader);
-        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 1.0f, 1.0f, 1.0f);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), movement[0], movement[1]);
-
-        drawRectangle(&rect2);
-
-        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 1.0f, 0.0f, 0.0f, 1.0f);
-        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), mouse.x, WINDOWHEIGHT - mouse.y);
-        drawRectangle(&mouseRect);
-
-
-        glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.0f, 0.0f, 1.0f, 1.0f);
-        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
-        drawRectangle(&rect3);
+        drawRectangle(&rect2, absoluteShader, movement[0], movement[1], 1.0f, 1.0f, 1.0f, 1.0f);
+        drawRectangle(&mouseRect, absoluteShader, mouse.x, WINDOWHEIGHT - mouse.y, 1.0f, 0.0f, 0.0f, 1.0f);
+        drawRectangle(&rect3, absoluteShader, 100, 200, 0.0f, 0.0f, 1.0f, 1.0f);
 
         if (inRect(button1, (int)mouse.x, (int)(WINDOWHEIGHT - mouse.y)) && mouse.left) {
-            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 1.0f, 1.0f);
+            drawRectangle(&button1, absoluteShader, 200.0f, 200.0f, 1.0f, 0.0f, 0.0f, 1.0f);
         }
         else {
-            glUniform4f(glGetUniformLocation(absoluteShader, "col"), 0.2f, 0.0f, 0.2f, 1.0f);
+            drawRectangle(&button1, absoluteShader, 200.0f, 200.0f, 0.0f, 0.0f, 1.0f, 1.0f);
         }
-        glUniform2f(glGetUniformLocation(absoluteShader, "transform"), 0.0f, 0.0f);
-        drawRectangle(&button1);
 
         glUseProgram(circleShader);
         glUniformMatrix4fv(glGetUniformLocation(circleShader, "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -513,12 +488,11 @@ int main() {
         glBindBuffer(GL_ARRAY_BUFFER, circle1.VBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, circle1.EBO);
 
-
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
         glUseProgram(textShader);
         glUniformMatrix4fv(glGetUniformLocation(textShader, "projection"), 1, GL_FALSE, &projection[0][0]);
-
-        
         vec3 color = {1.0f, 1.0f, 1.0f};
         sprintf(width, "Window x: %d", WINDOWWIDTH);
         sprintf(height, "Window y: %d", WINDOWHEIGHT);

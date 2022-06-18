@@ -5,12 +5,13 @@
 #include "glad/glad.h"
 
 struct Rectangle {
-    unsigned int VAO, VBO, EBO;
     float verts[20];
+    float transform[2];
+    unsigned int VAO, VBO, EBO;
 };
 
-void makeRectangle(vec2 p1, vec2 p2, struct Rectangle *rectangle);
+void makeRectangle(float width, float height, struct Rectangle *rectangle);
 int inRect(struct Rectangle rect, int x, int y);
-void drawRectangle(struct Rectangle *rect);
+void drawRectangle(struct Rectangle *rect, unsigned int shader, float x, float y, float r, float g, float b, float a);
 
 #endif
