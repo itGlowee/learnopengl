@@ -252,13 +252,13 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
-
-    //const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    //glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-    //WINDOWWIDTH = mode->width;
-    //WINDOWHEIGHT = mode->height;
-    //GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "LearnOpenGL", glfwGetPrimaryMonitor(), NULL);
-    GLFWwindow *window = glfwCreateWindow(WINDOWWIDTH, WINDOWHEIGHT, "LearnOpenGL", NULL, NULL);
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
+    const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+    WINDOWWIDTH = mode->width;
+    WINDOWHEIGHT = mode->height;
+    GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "LearnOpenGL", glfwGetPrimaryMonitor(), NULL);
+    //GLFWwindow *window = glfwCreateWindow(WINDOWWIDTH, WINDOWHEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL) {
         printf("Failed to create GLFW window :(\n");
         glfwTerminate();
@@ -269,7 +269,8 @@ int main() {
         printf("Failed to initialze GLAD\n");
         return -1;
     }
-    glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
+    //glViewport(0, 0, WINDOWWIDTH, WINDOWHEIGHT);
+    glViewport(0, 0, mode->width, mode->height);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, cursor_position_callback);
@@ -370,15 +371,15 @@ int main() {
 
     // wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     char width[32];
     char height[32];
     char mousex[32];
     char mousey[32];
     char FPS[32];
-    const unsigned int FPSsamplesize = 10;
+    const unsigned int FPSsamplesize = 1000;
     double previous[FPSsamplesize];
 
     struct Rectangle frameRect;
@@ -400,8 +401,8 @@ int main() {
     makeRectangle(100.0f, 100.0f, &circle1);
 
     float line[] = {
-        20.0f,                  100.0f,                 0.0f,
-        WINDOWWIDTH - 40.0f,    100.0f,                 0.0f,
+        20.0f,                  300.0f,                 0.0f,
+        WINDOWWIDTH - 40.0f,    300.0f,                 0.0f,
         WINDOWWIDTH - 40.0f,    WINDOWHEIGHT - 100.0f,  0.0f,
         20.0f,                  WINDOWHEIGHT - 100.0f,  0.0f
     };
@@ -439,16 +440,16 @@ int main() {
             printf("Time: %4.1lf\n", time);
         }
         if (keyboard.left_arrow) {
-            movement[0] -= 10.0f;
+            movement[0] -= 500.0f * deltaTime;
         }
         if (keyboard.right_arrow) {
-            movement[0] += 10.0f;
+            movement[0] += 500.0f * deltaTime;
         }
         if (keyboard.up_arrow) {
-            movement[1] += 10.0f;
+            movement[1] += 500.0f * deltaTime;
         }
         if (keyboard.down_arrow) {
-            movement[1] -= 10.0f;
+            movement[1] -= 500.0f * deltaTime;
         }
         // calculate projection
         glm_ortho(0.0f, (float)WINDOWWIDTH, 0.0f, (float)WINDOWHEIGHT, 0.001f, -1000.0f, projection);
@@ -459,8 +460,6 @@ int main() {
         glUseProgram(relativeShader);
         vec3 color = { fabs(sin(time * 0.3f)), fabs(sin(time * 0.5f)), fabs(sin(time)) };
         drawRectangle(&frameRect, relativeShader, 0, 0, color, 1.0f);
-
-
        
         glUseProgram(absoluteShader);
         glUniformMatrix4fv(glGetUniformLocation(absoluteShader, "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -510,7 +509,8 @@ int main() {
         
         sprintf(FPS, "FPS: %d", (int) (1.0f / average));
         RenderText(textShader, FPS, 20.0f, 125.0f, 0.5f, WHITE);
-        glfwSwapBuffers(window);
+        glFlush();
+        //glfwSwapBuffers(window);
         glfwPollEvents();
         deltaTime = glfwGetTime() - time;
     }
